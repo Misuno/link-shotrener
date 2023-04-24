@@ -5,9 +5,12 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [environ             "1.1.0"]
-                 [morse               "0.2.4"]]
+  :dependencies [[org.clojure/clojure       "1.8.0"]
+                 [environ                   "1.1.0"]
+                 [morse                     "0.2.4"]
+                 [nano-id                   "1.0.0"]
+                 [org.clojure/java.jdbc     "0.7.12"]
+                 [mysql/mysql-connector-java "8.0.33"]]
 
   :plugins [[lein-environ "1.1.0"]]
 
