@@ -1,8 +1,7 @@
 (ns test-bot.generator
   (:require
    [nano-id.core :refer [nano-id]]
-   [clojure.java.jdbc :as j]
-   [clojure.string :as s]))
+   [clojure.java.jdbc :as j]))
 
 (def mysql-db {:subprotocol "mysql"
                :subname "//127.0.0.1:3306/link_shortener"
@@ -11,8 +10,14 @@
 
 (def links (atom {}))
 
+(defn clear-links!
+  "Clears links map"
+  []
+  (reset! links {}))
+
+
 (def domain-name
-  (or (System/getenv "BASE_IRI") "http://localhost/"))
+  (or (System/getenv "BASE_IRI") "http://localhost"))
 
 (defn get-from-db!
   [db sl]
@@ -40,26 +45,24 @@
 
 (defn get-long-link!
   [short]
-  (let [sl (s/replace short domain-name "")]
-    (get @links (keyword short)
-         (let [ll (get-long-from-db! sl)]
-           (if ll
-             (do (save-link-locally! ll short)
-                 ll)
-             "no link")))))
+  (get @links (keyword short)
+       (let [ll (get-long-from-db! short)]
+         (if ll
+           (do (save-link-locally! ll short)
+               ll)
+           false))))
 
-(defn make-link
-  [link]
+(defn make-link []
   (nano-id 7))
 
 (defn link-generator!
   [id link]
-  (->> (make-link link)
+  (->> (make-link)
        (save-link id link)
        (str domain-name)))
 
 (defn get-all-links!
   [id]
-  (j/query mysql-db (str 
+  (j/query mysql-db (str
                      " select long_link, short_link from links"
                      " where chat = " id ";")))
