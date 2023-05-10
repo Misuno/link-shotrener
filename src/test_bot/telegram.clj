@@ -1,8 +1,11 @@
 (ns test-bot.telegram
-  (:require
-   [morse.handlers :as h]
-   [morse.api :as t]
-   [test-bot.generator :refer :all]))
+  (:require [clojure.core.async :refer [<!!]]
+            [clojure.string :as str]
+            [morse.api :as t]
+            [morse.handlers :as h]
+            [morse.polling :as p]
+            [test-bot.generator :refer [clear-links! get-all-links!
+                                        get-long-link! link-generator!]]))
 
 ; TODO: fill correct token
 (def token "1324057622:AAHw82jikU8YK6_5jXbQP44i0oQNQNU03EY")
@@ -10,7 +13,7 @@
 (def text-handlers (atom {}))
 
 (defn default-text-handler []
-  (fn [id msg]
+  (fn [id _]
     (t/send-text
      token
      id
@@ -82,3 +85,13 @@
        "Get link" (getlink id)
        "Show all my links" (all-links id)
        ((get-text-handler id) id message)))))
+
+
+(defn start-telegram!
+  []
+  (when (str/blank? token)
+    (println "Please provde token in TELEGRAM_TOKEN environment variable!")
+    (System/exit 1))
+
+  (println "Starting the test-bot")
+  (<!! (p/start token handler)))

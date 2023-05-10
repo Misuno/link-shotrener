@@ -1,6 +1,6 @@
 (ns test-bot.server
-  (:require [ring.adapter.jetty :refer :all]
-            [ring.util.response :refer :all]
+  (:require [ring.adapter.jetty :refer [run-jetty]]
+            [ring.util.response :refer [redirect response]]
             [test-bot.generator :refer [get-long-link!]]))
 
 (defn srv-handler [{uri :uri}]
