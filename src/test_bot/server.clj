@@ -1,24 +1,26 @@
 (ns test-bot.server
   (:require [ring.adapter.jetty :refer [run-jetty]]
-            [ring.util.response :refer [redirect response]]
-            [test-bot.generator :refer [get-long-link!]]))
+            [ring.util.response :as r]
+            [test-bot.generator :refer [get-long-link!]]
+            [test-bot.stats :refer [save-click]]))
 
-(defn srv-handler [{uri :uri}]
+(defn link-found!
+  [sl ll request]
+  (save-click sl request)
+  (r/redirect ll))
+
+(defn srv-handler [{uri :uri :as request}]
   (let [l (subs uri 1)
         ll (get-long-link! l)]
+    (prn "ll = " ll)
     (if ll
-      (redirect ll)
-      (response "No link"))))
+      (link-found! l ll request)
+      (r/response "No link!!!"))))
 
-(defonce server
+(def server
   (run-jetty srv-handler {:port 3000
                           :join? false}))
 
 (comment 
-   (.start server)
   (.stop server)
   :rcf)
-
-
-
-

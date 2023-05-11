@@ -3,8 +3,6 @@
             [test-bot.telegram :refer [start-telegram!]])
   (:gen-class))
 
-
-
 (defn -main
   [& args]
   (start-telegram!)

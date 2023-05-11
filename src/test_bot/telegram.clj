@@ -4,8 +4,8 @@
             [morse.api :as t]
             [morse.handlers :as h]
             [morse.polling :as p]
-            [test-bot.generator :refer [clear-links! get-all-links!
-                                        get-long-link! link-generator!]]))
+            [test-bot.generator :refer [clear-links! get-long-link! link-generator!]]
+            [test-bot.dbcontroller :refer [get-all-links!]]))
 
 ; TODO: fill correct token
 (def token "1324057622:AAHw82jikU8YK6_5jXbQP44i0oQNQNU03EY")
