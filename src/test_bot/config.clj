@@ -9,3 +9,8 @@
 (defn read-config! []
   (reset! config (j/read-value (slurp config-file) j/keyword-keys-object-mapper)))
 
+
+(defn token
+  "Shorthand for bot-token parameter"
+  []
+  (:bot-token @config))
