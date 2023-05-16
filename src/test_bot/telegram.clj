@@ -5,7 +5,7 @@
             [morse.handlers :as h]
             [morse.polling :as p]
             [test-bot.generator :refer [clear-links! get-long-link! link-generator!]]
-            [test-bot.dbcontroller :refer [get-all-links!]]))
+            [test-bot.filedbcontroller :as db]))
 
 ; TODO: fill correct token
 (def token "1324057622:AAHw82jikU8YK6_5jXbQP44i0oQNQNU03EY")
@@ -54,7 +54,7 @@
 (defn all-links
   [id]
   (println "all links: " id)
-  (let [links-list (get-all-links! id)]
+  (let [links-list (db/get-all-links! id)]
     (println links-list)
     (doall (map #(do
                    (println "combined: " %)

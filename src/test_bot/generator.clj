@@ -1,34 +1,37 @@
 (ns test-bot.generator
   (:require [nano-id.core :refer [nano-id]]
-            [test-bot.dbcontroller :refer [get-from-db! save-to-db!]]))
-
-(def links (atom {}))
-
-(defn clear-links!
-  "Clears links map"
-  []
-  (reset! links {}))
-
+            [test-bot.filedbcontroller :as db]))
 
 (def domain-name
   (or (System/getenv "BASE_IRI") "http://localhost"))
 
-(defn save-link-locally!
+(def cache-size 500)
+(def cache (atom {}))
+
+(defn clear-links!
+  "Clears links map"
+  []
+  (reset! cache {}))
+
+(defn add-to-cache!
   [long short]
-  (swap! links #(assoc % short long)))
+  (swap! cache #(assoc % short long))
+  #_{:clj-kondo/ignore [:missing-else-branch]}
+  (if (> (count @cache) cache-size)
+    (swap! cache #(dissoc % (first (keys %))))))
 
 (defn save-link
   [id long short]
-  (save-to-db! id long short)
-  (save-link-locally! long short)
+  (db/save-to-db! id long short)
+  (add-to-cache! long short)
   short)
 
 (defn get-long-link!
   [short]
-  (get @links (keyword short)
-       (let [ll (get-from-db! short)]
+  (get @cache (keyword short)
+       (let [ll (db/get-from-db! short)]
          (if ll
-           (do (save-link-locally! ll short)
+           (do (add-to-cache! ll short)
                ll)
            false))))
 
@@ -39,6 +42,6 @@
   [id link]
   (->> (make-link)
        (save-link id link)
-       (str domain-name)))
+       (str domain-name "/")))
 
 
