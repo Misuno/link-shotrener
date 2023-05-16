@@ -7,5 +7,5 @@
   "resources/config.json")
 
 (defn read-config! []
-  (swap! config (j/read-value (slurp config-file) j/keyword-keys-object-mapper)))
+  (reset! config (j/read-value (slurp config-file) j/keyword-keys-object-mapper)))
 
