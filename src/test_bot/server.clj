@@ -2,7 +2,8 @@
   (:require [ring.adapter.jetty :refer [run-jetty]]
             [ring.util.response :as r]
             [test-bot.generator :refer [get-long-link!]]
-            [test-bot.stats :refer [save-click]]))
+            [test-bot.stats :refer [save-click]]
+            [test-bot.config :as c]))
 
 (defn link-found!
   [sl ll request]
@@ -18,9 +19,9 @@
       (r/response "No link!!!"))))
 
 (def server
-  (run-jetty srv-handler {:port 3000
+  (run-jetty srv-handler {:port (c/server-port);; (:server-port @c/config)
                           :join? false}))
 
-(comment 
+(comment
   (.stop server)
   :rcf)

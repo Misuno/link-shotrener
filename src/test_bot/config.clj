@@ -14,3 +14,18 @@
   "Shorthand for bot-token parameter"
   []
   (:bot-token @config))
+
+(defn db-file
+  "Shorthand for db-file parameter"
+  []
+  (:urls-file @config))
+
+(defn server-port
+  "Shorthand for server-port parameter"
+  []
+  (:server-port @config))
+
+(defn bot-admin?
+  [chatid]
+  (contains? (:bot-admins @config) chatid))
+

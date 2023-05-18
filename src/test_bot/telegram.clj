@@ -63,9 +63,11 @@
 (h/defhandler handler
 
   (h/command-fn "start"
-                (fn [{{id :id :as chat} :chat}]
-                  (println "Bot joined new chat: " chat)
-                  (t/send-text (c/token) id "Welcome to test-bot!")))
+                (fn [{{id :id username :username :as chat} :chat}]
+                  (t/send-text (c/token) id "Welcome to woo link shortener")
+                  (if (c/bot-admin? username)
+                    (t/send-text (c/token) id "✅ You have rights to work here!")
+                    (t/send-text (c/token) id "✅ You have rights to work here!"))))
 
   (h/command-fn "help"
                 (fn [{{id :id :as chat} :chat}]
@@ -77,13 +79,14 @@
 
 
   (h/message-fn
-   (fn [{{id :id} :chat text :text :as message}]
-     (println text)
-     (case text
-       "Create link" (newlink id)
-       "Get link" (getlink id)
-       "Show all my links" (all-links id)
-       ((get-text-handler id) id message)))))
+   (fn [{{id :id username :username} :chat text :text :as message}]
+     (when (c/bot-admin? username)
+       (println text)
+       (case text
+         "Create link" (newlink id)
+         "Get link" (getlink id)
+         "Show all my links" (all-links id)
+         ((get-text-handler id) id message))))))
 
 
 (defn start-telegram!

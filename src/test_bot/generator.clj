@@ -1,11 +1,8 @@
 (ns test-bot.generator
   (:require [nano-id.core :refer [nano-id]]
-            [test-bot.filedbcontroller :as db]))
+            [test-bot.filedbcontroller :as db]
+            [test-bot.config :as c]))
 
-(def domain-name
-  (or (System/getenv "BASE_IRI") "http://localhost"))
-
-(def cache-size 500)
 (def cache (atom {}))
 
 (defn clear-links!
@@ -17,7 +14,7 @@
   [long short]
   (swap! cache #(assoc % short long))
   #_{:clj-kondo/ignore [:missing-else-branch]}
-  (if (> (count @cache) cache-size)
+  (if (> (count @cache) (:links-cache-size c/config))
     (swap! cache #(dissoc % (first (keys %))))))
 
 (defn save-link
@@ -42,6 +39,4 @@
   [id link]
   (->> (make-link)
        (save-link id link)
-       (str domain-name "/")))
-
-
+       (str (:base-uri c/config) "/")))
