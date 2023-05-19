@@ -1,5 +1,5 @@
 (ns test-bot.core
-  (:require [test-bot.server :refer [server]]
+  (:require [test-bot.server :refer [run-server]]
             [test-bot.telegram :refer [start-telegram!]]
             [test-bot.config :as c])
   (:gen-class))
@@ -8,4 +8,4 @@
   [& args]
   (c/read-config!)
   (start-telegram!)
-  (.start server))
+  (run-server))

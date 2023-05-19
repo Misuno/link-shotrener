@@ -18,10 +18,6 @@
       (link-found! l ll request)
       (r/response "No link!!!"))))
 
-(def server
-  (run-jetty srv-handler {:port (c/server-port);; (:server-port @c/config)
+(defn run-server []
+  (run-jetty srv-handler {:port (c/server-port)
                           :join? false}))
-
-(comment
-  (.stop server)
-  :rcf)
