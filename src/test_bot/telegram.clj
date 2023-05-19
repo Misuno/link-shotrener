@@ -5,17 +5,15 @@
             [morse.handlers :as h]
             [morse.polling :as p]
             [test-bot.generator :refer [clear-links! get-long-link! link-generator!]]
-            [test-bot.filedbcontroller :as db]))
-
-; TODO: fill correct token
-(def token "1324057622:AAHw82jikU8YK6_5jXbQP44i0oQNQNU03EY")
+            [test-bot.filedbcontroller :as db]
+            [test-bot.config :as c]))
 
 (def text-handlers (atom {}))
 
 (defn default-text-handler []
   (fn [id _]
     (t/send-text
-     token
+     (c/token)
      id
      {:reply_markup
       {:keyboard
@@ -39,16 +37,16 @@
 
 (defn newlink
   [id]
-  (t/send-text token id "Enter link")
+  (t/send-text (c/token) id "Enter link")
   (set-handler id (fn [id {link :text}]
-                    (t/send-text token id (link-generator! id link))
+                    (t/send-text (c/token) id (link-generator! id link))
                     (clear-handler id))))
 
 (defn getlink
   [id]
-  (t/send-text token id "Enter link")
+  (t/send-text (c/token) id "Enter link")
   (set-handler id (fn [id {link :text}]
-                    (t/send-text token id (get-long-link! link))
+                    (t/send-text (c/token) id (get-long-link! link))
                     (clear-handler id))))
 
 (defn all-links
@@ -58,40 +56,44 @@
     (println links-list)
     (doall (map #(do
                    (println "combined: " %)
-                   (t/send-text token id %))
+                   (t/send-text (c/token) id %))
                 links-list))))
 
+#_{:clj-kondo/ignore [:unresolved-symbol]}
 (h/defhandler handler
 
   (h/command-fn "start"
-                (fn [{{id :id :as chat} :chat}]
-                  (println "Bot joined new chat: " chat)
-                  (t/send-text token id "Welcome to test-bot!")))
+                (fn [{{id :id username :username :as chat} :chat}]
+                  (t/send-text (c/token) id "Welcome to woo link shortener")
+                  (if (c/bot-admin? username)
+                    (t/send-text (c/token) id "✅ You have rights to work here!")
+                    (t/send-text (c/token) id "✅ You have rights to work here!"))))
 
   (h/command-fn "help"
                 (fn [{{id :id :as chat} :chat}]
                   (println "Help was requested in " chat)
-                  (t/send-text token id "Help is on the way")))
+                  (t/send-text ((c/token)) id "Help is on the way")))
 
   (h/command-fn "reset"
                 (fn [_] (clear-links!)))
 
 
   (h/message-fn
-   (fn [{{id :id} :chat text :text :as message}]
-     (println text)
-     (case text
-       "Create link" (newlink id)
-       "Get link" (getlink id)
-       "Show all my links" (all-links id)
-       ((get-text-handler id) id message)))))
+   (fn [{{id :id username :username} :chat text :text :as message}]
+     (when (c/bot-admin? username)
+       (println text)
+       (case text
+         "Create link" (newlink id)
+         "Get link" (getlink id)
+         "Show all my links" (all-links id)
+         ((get-text-handler id) id message))))))
 
 
 (defn start-telegram!
   []
-  (when (str/blank? token)
-    (println "Please provde token in TELEGRAM_TOKEN environment variable!")
-    (System/exit 1))
+  (when (str/blank? (c/token))
+    (println "Please provde token in TELEGRAM_TOKEN environment variable!"))
 
   (println "Starting the test-bot")
-  (<!! (p/start token handler)))
+  (<!! #_{:clj-kondo/ignore [:unresolved-symbol]}
+       (p/start (c/token) handler)))
