@@ -79,7 +79,6 @@
 
   (h/message-fn
    (fn [{{id :id username :username} :chat text :text :as message}]
-     (println "Message from " username)
      (when (c/bot-admin? username)
        (println text)
        (case text

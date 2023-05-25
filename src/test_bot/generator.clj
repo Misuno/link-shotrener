@@ -37,10 +37,9 @@
                 "No link")))))
 
 (defn make-link []
-  (nano-id 7))
+  (str (c/base-uri) (nano-id (c/tail-length))))
 
 (defn link-generator!
   [id link]
   (->> (make-link)
-       (save-link id link)
-       (str (:base-uri c/config) "/")))
+       (save-link id link)))

@@ -28,6 +28,15 @@
 (defn buffer-size []
   (:buffer-size @config))
 
+(defn base-uri []
+  (let [u (:base-uri @config)]
+    (if u
+      u
+      "http://localhost")))
+
+(defn tail-length []
+  (:tail-length @config 7))
+
 (defn bot-admin?
   [chatid]
   (some #(= chatid %) (:bot-admins @config)))

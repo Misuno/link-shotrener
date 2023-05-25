@@ -1,5 +1,5 @@
-(defproject test-bot "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
+(defproject test-bot "0.1.1"
+  :description "telegram bot-operated link shortener"
   :url "http://example.com/FIXME"
 
   :license {:name "Eclipse Public License"
