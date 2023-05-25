@@ -1,9 +1,0 @@
-{
-    "urls-file": "resources/urls.csv",
-    "server-port": 3000,
-    "bot-token": "1324057622:AAHw82jikU8YK6_5jXbQP44i0oQNQNU03EY",
-    "bot-admins": [
-        "misuno_san"
-    ],
-    "buffer-size": 300
-}
