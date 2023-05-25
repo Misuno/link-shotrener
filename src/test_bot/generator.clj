@@ -4,6 +4,7 @@
             [test-bot.config :as c]))
 
 (def cache (atom {}))
+(def cache-keys (atom []))
 
 (defn clear-links!
   "Clears links map"
@@ -13,9 +14,10 @@
 (defn add-to-cache!
   [long short]
   (swap! cache #(assoc % short long))
-  #_{:clj-kondo/ignore [:missing-else-branch]}
-  (if (> (count @cache) (:links-cache-size c/config))
-    (swap! cache #(dissoc % (first (keys %))))))
+  (swap! cache-keys #(conj % short))
+  (if (> (count @cache-keys) (c/buffer-size))
+    (do (swap! cache #(dissoc % (first @cache-keys)))
+        (swap! cache-keys #(vec (rest %))))))
 
 (defn save-link
   [id long short]
@@ -25,12 +27,14 @@
 
 (defn get-long-link!
   [short]
-  (get @cache (keyword short)
-       (let [ll (db/get-from-db! short)]
-         (if ll
-           (do (add-to-cache! ll short)
-               ll)
-           false))))
+  (let [l (get @cache short)]
+    (if l
+      l
+      (let [ll (db/get-from-db! short)]
+              (if ll
+                (do (add-to-cache! ll short)
+                    ll)
+                "No link")))))
 
 (defn make-link []
   (nano-id 7))

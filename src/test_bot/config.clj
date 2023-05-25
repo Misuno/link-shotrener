@@ -25,7 +25,10 @@
   []
   (:server-port @config))
 
+(defn buffer-size []
+  (:buffer-size @config))
+
 (defn bot-admin?
   [chatid]
-  (contains? (:bot-admins @config) chatid))
+  (some #(= chatid %) (:bot-admins @config)))
 

@@ -54,9 +54,8 @@
   (println "all links: " id)
   (let [links-list (db/get-all-links! id)]
     (println links-list)
-    (doall (map #(do
-                   (println "combined: " %)
-                   (t/send-text (c/token) id %))
+    (doall (map (fn [[short long _]]
+                  (t/send-text (c/token) id (str long " -> " short)))
                 links-list))))
 
 #_{:clj-kondo/ignore [:unresolved-symbol]}
@@ -80,6 +79,7 @@
 
   (h/message-fn
    (fn [{{id :id username :username} :chat text :text :as message}]
+     (println "Message from " username)
      (when (c/bot-admin? username)
        (println text)
        (case text
@@ -94,6 +94,6 @@
   (when (str/blank? (c/token))
     (println "Please provde token in TELEGRAM_TOKEN environment variable!"))
 
-  (println "Starting the test-bot")
+  (println "Starting the bot")
   (<!! #_{:clj-kondo/ignore [:unresolved-symbol]}
        (p/start (c/token) handler)))
