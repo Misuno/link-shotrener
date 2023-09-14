@@ -1,4 +1,4 @@
-(defproject test-bot "0.1.1"
+(defproject test-bot "0.1.3"
   :description "telegram bot-operated link shortener"
   :url "http://example.com/FIXME"
 

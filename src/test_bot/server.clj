@@ -3,7 +3,8 @@
             [ring.util.response :as r]
             [test-bot.generator :refer [get-long-link!]]
             [test-bot.stats :refer [save-click]]
-            [test-bot.config :as c]))
+            [test-bot.config :as c]
+            [test-bot.utils :refer [log]]))
 
 (defn link-found!
   [sl ll request]
@@ -11,13 +12,12 @@
   (r/redirect ll))
 
 (defn srv-handler [{uri :uri :as request}]
-  (let [l (subs uri 1)
-        ll (get-long-link! l)]
-    (prn "ll = " ll)
-    (if ll
-      (link-found! l ll request)
-      (r/response "No link!!!"))))
+  (log "working on a uri" uri)
+  (try
+    (link-found! uri (get-long-link! uri) request)
+    (catch Error e (r/response "No link!!!"))))
 
 (defn run-server []
+  (log "Starting server on port" (c/server-port))
   (run-jetty srv-handler {:port (c/server-port)
                           :join? false}))

@@ -1,4 +1,4 @@
-(ns test-bot.filedbcontroller
+(ns test-bot.filedb
   (:require [clojure.string :as s]
             [test-bot.config :as c]))
 

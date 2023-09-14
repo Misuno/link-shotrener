@@ -1,23 +1,8 @@
 (ns test-bot.generator
   (:require [nano-id.core :refer [nano-id]]
-            [test-bot.filedbcontroller :as db]
-            [test-bot.config :as c]))
-
-(def cache (atom {}))
-(def cache-keys (atom []))
-
-(defn clear-links!
-  "Clears links map"
-  []
-  (reset! cache {}))
-
-(defn add-to-cache!
-  [long short]
-  (swap! cache #(assoc % short long))
-  (swap! cache-keys #(conj % short))
-  (if (> (count @cache-keys) (c/buffer-size))
-    (do (swap! cache #(dissoc % (first @cache-keys)))
-        (swap! cache-keys #(vec (rest %))))))
+            [test-bot.dbcontroller :as db]
+            [test-bot.config :as c]
+            [test-bot.cache :refer [add-to-cache! get-from-cache]]))
 
 (defn save-link
   [id long short]
@@ -25,21 +10,25 @@
   (add-to-cache! long short)
   short)
 
+(defn get-long-from-db!
+  [short]
+  (let [ll (db/get-from-db! short)]
+    (if ll
+      (do (add-to-cache! ll short)
+          ll)
+      (throw "No link in db"))))
+
 (defn get-long-link!
   [short]
-  (let [l (get @cache short)]
-    (if l
-      l
-      (let [ll (db/get-from-db! short)]
-              (if ll
-                (do (add-to-cache! ll short)
-                    ll)
-                "No link")))))
+  (get-from-cache short
+                  (try (get-long-from-db! short)
+                       (catch Exception e (throw e)))))
 
 (defn make-link []
-  (str (c/base-uri) (nano-id (c/tail-length))))
+  (str (nano-id (c/tail-length))))
 
 (defn link-generator!
   [id link]
   (->> (make-link)
+       (str "/")
        (save-link id link)))

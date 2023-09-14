@@ -7,8 +7,9 @@
   "resources/config.json")
 
 (defn read-config! []
-  (reset! config (j/read-value (slurp config-file) j/keyword-keys-object-mapper)))
-
+  (reset! config
+          (j/read-value (slurp config-file)
+                        j/keyword-keys-object-mapper)))
 
 (defn token
   "Shorthand for bot-token parameter"
@@ -32,11 +33,19 @@
   (let [u (:base-uri @config)]
     (if u
       u
-      "http://localhost")))
+      "http://localhost:3000")))
 
 (defn tail-length []
   (:tail-length @config 7))
 
+(defn log-enabled? []
+  (:log @config false))
+
+(defn stat-enabled? []
+  (:stat_enabled @config false))
+
+(defn db-type []
+  (:db-type @config "file"))
 (defn bot-admin?
   [chatid]
   (some #(= chatid %) (:bot-admins @config)))

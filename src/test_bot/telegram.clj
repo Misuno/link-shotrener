@@ -4,9 +4,11 @@
             [morse.api :as t]
             [morse.handlers :as h]
             [morse.polling :as p]
-            [test-bot.generator :refer [clear-links! get-long-link! link-generator!]]
-            [test-bot.filedbcontroller :as db]
-            [test-bot.config :as c]))
+            [test-bot.generator :refer [link-generator!]]
+            [test-bot.config :as c]
+            [test-bot.dbcontroller :as db]
+            [test-bot.utils :refer [log]]
+            [test-bot.cache :refer [clear-links!]]))
 
 (def text-handlers (atom {}))
 
@@ -39,23 +41,29 @@
   [id]
   (t/send-text (c/token) id "Enter link")
   (set-handler id (fn [id {link :text}]
-                    (t/send-text (c/token) id (link-generator! id link))
+                    (t/send-text (c/token)
+                                 id
+                                 (str (c/base-uri)
+                                      (link-generator! id link)))
                     (clear-handler id))))
 
 (defn getlink
   [id]
   (t/send-text (c/token) id "Enter link")
   (set-handler id (fn [id {link :text}]
-                    (t/send-text (c/token) id (get-long-link! link))
+                    (t/send-text (c/token)
+                                 id
+                                 "Not working")
                     (clear-handler id))))
 
 (defn all-links
   [id]
-  (println "all links: " id)
+  (log "all links: " id)
   (let [links-list (db/get-all-links! id)]
-    (println links-list)
     (doall (map (fn [[short long _]]
-                  (t/send-text (c/token) id (str long " -> " short)))
+                  (t/send-text (c/token)
+                               id
+                               (str long " -> " (c/base-uri) short)))
                 links-list))))
 
 #_{:clj-kondo/ignore [:unresolved-symbol]}
@@ -70,7 +78,7 @@
 
   (h/command-fn "help"
                 (fn [{{id :id :as chat} :chat}]
-                  (println "Help was requested in " chat)
+                  (log "Help was requested in " chat)
                   (t/send-text ((c/token)) id "Help is on the way")))
 
   (h/command-fn "reset"
@@ -79,8 +87,8 @@
 
   (h/message-fn
    (fn [{{id :id username :username} :chat text :text :as message}]
+     (log "Chat:[" username "]" text)
      (when (c/bot-admin? username)
-       (println text)
        (case text
          "Create link" (newlink id)
          "Get link" (getlink id)
@@ -95,4 +103,7 @@
 
   (println "Starting the bot")
   (<!! #_{:clj-kondo/ignore [:unresolved-symbol]}
-       (p/start (c/token) handler)))
+   (try (p/start (c/token) handler)
+        (catch Exception e
+          (println "Exception in start bot: " e))))
+  (recur))
