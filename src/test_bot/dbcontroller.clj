@@ -4,8 +4,11 @@
    [test-bot.mariadb :as dbc]))
 
 (defn save-click!
-  [sl data]
-  (dbc/save-click! sl data))
+  ([sl data]
+   (dbc/save-click! sl data))
+  ([clicks]
+   (dbc/save-click! clicks)))
+
 
 (defn get-all-links! [id]
   (dbc/get-all-links! id))
