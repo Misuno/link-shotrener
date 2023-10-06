@@ -69,5 +69,6 @@
 
 (defn get-all-links!
   [id]
-  (j/query database (str " select long_link, short_link from links"
-                         " where chat = " id ";")))
+  (vec (j/query database
+                (str " select long_link, short_link from links"
+                     " where chat = " id ";"))))

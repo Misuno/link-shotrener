@@ -30,25 +30,21 @@
   (:buffer-size @config))
 
 (defn base-uri []
-  (let [u (:base-uri @config)]
-    (if u
-      u
-      "http://localhost:3000")))
+  (:base-uri @config "http://localhost:3000"))
+
 
 (defn tail-length []
   (:tail-length @config 7))
 
-(defn new-function []
-  (defn log-enabled? []
-  (:log @config false)))
-
-(new-function)
+(defn log-enabled? []
+  (:log @config false))
 
 (defn stat-enabled? []
   (:stat_enabled @config false))
 
 (defn db-type []
   (:db-type @config "file"))
+
 (defn bot-admin?
   [chatid]
   (some #(= chatid %) (:bot-admins @config)))

@@ -52,17 +52,33 @@
   (t/send-text (c/token) id "Enter link")
   (set-handler id (fn [id {link :text}] (t/send-text (c/token)
                                                      id
-                                                     (try (-> link 
+                                                     (try (-> link
                                                               get-shortlink-tail
                                                               get-long-from-db!)
-                                                          (catch Exception e e)))
+                                                          (catch Exception e (str e))))
                     (clear-handler id))))
+
+(defn get-all-links!
+  [id]
+  (let [links-list (db/get-all-links! id)]
+    (reduce (fn [acc {short :short_link long :long_link}]
+              (conj acc
+                    (str long " -> " (c/base-uri) short)))
+            []
+            links-list)))
+
+(comment 
+  (get-all-links! 539153875)
+  
+  ;;
+  )
+
 
 (defn all-links
   [id]
   (log "all links: " id)
-  (let [links-list (db/get-all-links! id)]
-    (doall (map (fn [[short long _]]
+   (let [links-list (db/get-all-links! id)]
+    (doall (map (fn [{short :short_link long :long_link}]
                   (t/send-text (c/token)
                                id
                                (str long " -> " (c/base-uri) short)))
@@ -72,10 +88,10 @@
 (h/defhandler handler
 
   (h/command-fn "start"
-                (fn [{{id :id username :username :as chat} :chat}]
+                (fn [{{id :id username :username :as _} :chat}]
                   (t/send-text (c/token) id "Welcome to woo link shortener")
                   (if (c/bot-admin? username)
-                    (t/send-text (c/token) id "✅ You have rights to work here!")
+                    (t/send-text (c/token) id "✅ You have admin rights to here!")
                     (t/send-text (c/token) id "✅ You have rights to work here!"))))
 
   (h/command-fn "help"
