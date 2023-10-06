@@ -17,3 +17,4 @@ resources/config.json
 resources/config.json
 resources/urls.csv
 Maria.session.sql
+.vscode*

@@ -2,7 +2,8 @@
   (:require [nano-id.core :refer [nano-id]]
             [test-bot.dbcontroller :as db]
             [test-bot.config :as c]
-            [test-bot.cache :refer [add-to-cache! get-from-cache]]))
+            [test-bot.cache :refer [add-to-cache! get-from-cache]]
+            [test-bot.utils :as u]))
 
 (defn save-link
   [id long short]

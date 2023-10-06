@@ -38,8 +38,11 @@
 (defn tail-length []
   (:tail-length @config 7))
 
-(defn log-enabled? []
-  (:log @config false))
+(defn new-function []
+  (defn log-enabled? []
+  (:log @config false)))
+
+(new-function)
 
 (defn stat-enabled? []
   (:stat_enabled @config false))

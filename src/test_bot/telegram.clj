@@ -4,10 +4,10 @@
             [morse.api :as t]
             [morse.handlers :as h]
             [morse.polling :as p]
-            [test-bot.generator :refer [link-generator!]]
+            [test-bot.generator :refer [link-generator! get-long-from-db!]]
             [test-bot.config :as c]
             [test-bot.dbcontroller :as db]
-            [test-bot.utils :refer [log]]
+            [test-bot.utils :refer [log get-shortlink-tail]]
             [test-bot.cache :refer [clear-links!]]))
 
 (def text-handlers (atom {}))
@@ -50,10 +50,12 @@
 (defn getlink
   [id]
   (t/send-text (c/token) id "Enter link")
-  (set-handler id (fn [id {link :text}]
-                    (t/send-text (c/token)
-                                 id
-                                 "Not working")
+  (set-handler id (fn [id {link :text}] (t/send-text (c/token)
+                                                     id
+                                                     (try (-> link 
+                                                              get-shortlink-tail
+                                                              get-long-from-db!)
+                                                          (catch Exception e e)))
                     (clear-handler id))))
 
 (defn all-links
