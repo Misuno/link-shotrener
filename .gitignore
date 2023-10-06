@@ -18,3 +18,4 @@ Maria.session.sql
 .vscode*
 /link-shortener.iml
 /projectFilesBackup/.idea/workspace.xml
+/resources/config.json
