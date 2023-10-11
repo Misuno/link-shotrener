@@ -1,0 +1,19 @@
+{
+    "server": {
+        "server-port": 3000
+    },
+    "db": {
+        "type": "file",
+        "url": "resources/urls.csv"
+    },
+    "telegram": {
+        "bot-token": "",
+        "bot-admins": [
+            "misuno_san"
+        ]
+    },
+    "buffer-size": 300,
+    "tail-length": 5,
+    "log": true,
+    "stat_enabled": false
+}
