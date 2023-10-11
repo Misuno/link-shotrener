@@ -12,5 +12,5 @@
        (catch Exception e
          (log (str "Exiting because of "
                    (.getMessage e)))
-         (java.lang.System/exit 1)))
+         (System/exit 1)))
   (start-telegram!))

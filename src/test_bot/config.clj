@@ -16,11 +16,6 @@
   []
   (:bot-token @config))
 
-(defn db-file
-  "Shorthand for db-file parameter"
-  []
-  (:urls-file @config))
-
 (defn server-port
   "Shorthand for server-port parameter"
   []
@@ -42,10 +37,22 @@
 (defn stat-enabled? []
   (:stat_enabled @config false))
 
+(defn ^:private db
+  "Private shortcut for db object in config file"
+  []
+  (:db @config))
+
 (defn db-type []
-  (:db-type @config "file"))
+  (:type (db)
+    (throw (Exception. "Db type not specified"))))
+
+(defn db-url
+  "Shorthand for database location parameter"
+  []
+  (:url (db)
+    (throw (Exception. "DB URL not specified"))))
 
 (defn bot-admin?
-  [chatid]
-  (some #(= chatid %) (:bot-admins @config)))
+  [chat-id]
+  (some #(= chat-id %) (:bot-admins @config)))
 

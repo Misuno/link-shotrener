@@ -1,12 +1,13 @@
 (ns test-bot.mariadb
   (:require [clojure.java.jdbc :as j]
             [java-time.api :as jt]
+            [test-bot.config :as c]
             [test-bot.utils :refer [log]]))
 
 (def database {:subprotocol "mysql"
-               :subname "//127.0.0.1:3306/link_shortener"
-               :user "root"
-               :password "fafner"})
+               :subname     (str c/db-url "/link_shortener")
+               :user        "root"
+               :password    "fafner"})
 
 (defn current-timestamp
   []

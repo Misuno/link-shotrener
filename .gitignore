@@ -16,3 +16,5 @@ pom.xml.asc
 resources/urls.csv
 Maria.session.sql
 .vscode*
+/link-shortener.iml
+/projectFilesBackup/.idea/workspace.xml
