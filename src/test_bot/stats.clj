@@ -18,7 +18,7 @@
 
 (defn save-click
   [sl data]
-  (when (c/stat-enabled?)
+  (when (c/stat-enabled!?)
     (swap! buffer
            conj
            {:short_link sl
@@ -29,4 +29,4 @@
 (comment
   (c/read-config!)
   (save-click "lala" ";a;a;")
-  (c/stat-enabled?))
+  (c/stat-enabled!?))

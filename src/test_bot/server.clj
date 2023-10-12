@@ -18,6 +18,6 @@
     (catch Error e (r/response "No link!!!"))))
 
 (defn run-server []
-  (log "Starting server on port" (c/server-port))
-  (run-jetty srv-handler {:port (c/server-port)
+  (log "Starting server on port" (c/server-port!))
+  (run-jetty srv-handler {:port (c/server-port!)
                           :join? false}))

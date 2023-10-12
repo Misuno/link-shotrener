@@ -4,7 +4,7 @@
 
 (defn log
   [& text]
-  (when (c/log-enabled?)
+  (when (c/log-enabled!?)
     (println text)))
 
 (defn get-shortlink-tail

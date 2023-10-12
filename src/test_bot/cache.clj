@@ -13,7 +13,7 @@
   [long short]
   (swap! cache #(assoc % short long))
   (swap! cache-keys #(conj % short))
-  (when (> (count @cache-keys) (c/buffer-size))
+  (when (> (count @cache-keys) (c/buffer-size!))
     (swap! cache #(dissoc % (first @cache-keys)))
     (swap! cache-keys #(vec (rest %)))))
 

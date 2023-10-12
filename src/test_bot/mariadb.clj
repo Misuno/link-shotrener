@@ -5,7 +5,7 @@
             [test-bot.utils :refer [log]]))
 
 (def database {:subprotocol "mysql"
-               :subname     (str c/db-url "/link_shortener")
+               :subname     (str c/db-url! "/link_shortener")
                :user        "root"
                :password    "fafner"})
 

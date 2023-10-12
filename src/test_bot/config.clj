@@ -11,46 +11,82 @@
           (j/read-value (slurp config-file)
                         j/keyword-keys-object-mapper)))
 
-(defn token
+(defn ^:private get-param-inner
+  ([atm kws not-found]
+   (or (get-in @atm kws) (if (fn? not-found) (not-found) not-found))))
+
+(defn get-param!
+  "Returns parameter from config based on the keyword"
+  ([not-found & kws]
+   (get-param-inner config kws not-found)))
+
+(defn get-param-callback!
+  "Returns parameter from config file or throws Exception"
+  [callback & kws]
+  (apply get-param! callback kws))
+
+(defn get-param-throws!
+  [errmsg & kws]
+  (let [error-msg errmsg]
+    (apply get-param-callback!
+           #(throw (Exception. error-msg))
+           kws)))
+
+(defn get-param-def-value!
+  [defv & kws]
+  (apply get-param! defv kws))
+
+(comment
+  (get-param-inner config [:lowg] "lalla")
+  (get-param-inner config [:ilog] (println "kaka"))
+  (get-param-inner config [:log] #(println "kaka"))
+  
+  (get-param! #(throw (Exception. "qqqq")) :telegram :token)
+  
+  (get-param-callback! #(throw (Exception. "qqqq")) :log)
+  (get-param-throws! "rrrrr" :log)
+
+  (get-param-def-value! "tutut" :log)
+  (get-param-def-value! "tutut" :loga)
+  ;;
+  )
+
+
+
+(defn token!
   "Shorthand for bot-token parameter"
   []
-  (:bot-token @config))
+  (get-param-throws! "No telegram token in config"
+                     :telegram :token))
 
-(defn server-port
+(defn server-port!
   "Shorthand for server-port parameter"
   []
-  (:server-port @config))
+  (get-param-throws! "No server port in config"
+                     :server :port))
 
-(defn buffer-size []
-  (:buffer-size @config))
+(defn buffer-size! []
+  (get-param-def-value! 128 :buffer-size))
 
-(defn base-uri []
-  (:base-uri @config "http://localhost:3000"))
-
+(defn base-url! []
+  (get-param-throws! "No base URL in config file" :server :url))
 
 (defn tail-length []
-  (:tail-length @config 7))
+  (get-param-def-value! 7 :tail-length))
 
-(defn log-enabled? []
-  (:log @config false))
+(defn log-enabled!? []
+  (get-param-def-value! false :log))
 
-(defn stat-enabled? []
-  (:stat_enabled @config false))
+(defn stat-enabled!? []
+  (get-param-def-value! false :stat-enabled))
 
-(defn ^:private db
-  "Private shortcut for db object in config file"
-  []
-  (:db @config))
+(defn db-type! []
+  (get-param-throws! "No db type specified in config" :db :type))
 
-(defn db-type []
-  (:type (db)
-    (throw (Exception. "Db type not specified"))))
-
-(defn db-url
+(defn db-url!
   "Shorthand for database location parameter"
   []
-  (:url (db)
-    (throw (Exception. "DB URL not specified"))))
+  (get-param-throws! "No DB URL in config" :db :url))
 
 (defn bot-admin?
   [chat-id]

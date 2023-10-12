@@ -15,7 +15,7 @@
 (defn default-text-handler []
   (fn [id _]
     (t/send-text
-     (c/token)
+     (c/token!)
      id
      {:reply_markup
       {:keyboard
@@ -39,18 +39,18 @@
 
 (defn newlink
   [id]
-  (t/send-text (c/token) id "Enter link")
+  (t/send-text (c/token!) id "Enter link")
   (set-handler id (fn [id {link :text}]
-                    (t/send-text (c/token)
+                    (t/send-text (c/token!)
                                  id
-                                 (str (c/base-uri)
+                                 (str (c/base-url!)
                                       (link-generator! id link)))
                     (clear-handler id))))
 
 (defn getlink
   [id]
-  (t/send-text (c/token) id "Enter link")
-  (set-handler id (fn [id {link :text}] (t/send-text (c/token)
+  (t/send-text (c/token!) id "Enter link")
+  (set-handler id (fn [id {link :text}] (t/send-text (c/token!)
                                                      id
                                                      (try (-> link
                                                               get-shortlink-tail
@@ -63,7 +63,7 @@
   (let [links-list (db/get-all-links! id)]
     (reduce (fn [acc {short :short_link long :long_link}]
               (conj acc
-                    (str long " -> " (c/base-uri) short)))
+                    (str long " -> " (c/base-url!) short)))
             []
             links-list)))
 
@@ -79,9 +79,9 @@
   (log "all links: " id)
    (let [links-list (db/get-all-links! id)]
     (doall (map (fn [{short :short_link long :long_link}]
-                  (t/send-text (c/token)
+                  (t/send-text (c/token!)
                                id
-                               (str long " -> " (c/base-uri) short)))
+                               (str long " -> " (c/base-url!) short)))
                 links-list))))
 
 #_{:clj-kondo/ignore [:unresolved-symbol]}
@@ -89,15 +89,15 @@
 
   (h/command-fn "start"
                 (fn [{{id :id username :username :as _} :chat}]
-                  (t/send-text (c/token) id "Welcome to woo link shortener")
+                  (t/send-text (c/token!) id "Welcome to woo link shortener")
                   (if (c/bot-admin? username)
-                    (t/send-text (c/token) id "✅ You have admin rights to here!")
-                    (t/send-text (c/token) id "✅ You have rights to work here!"))))
+                    (t/send-text (c/token!) id "✅ You have admin rights to here!")
+                    (t/send-text (c/token!) id "✅ You have rights to work here!"))))
 
   (h/command-fn "help"
                 (fn [{{id :id :as chat} :chat}]
                   (log "Help was requested in " chat)
-                  (t/send-text ((c/token)) id "Help is on the way")))
+                  (t/send-text ((c/token!)) id "Help is on the way")))
 
   (h/command-fn "reset"
                 (fn [_] (clear-links!)))
@@ -116,12 +116,12 @@
 
 (defn start-telegram!
   []
-  (when (str/blank? (c/token))
+  (when (str/blank? (c/token!))
     (println "Please provde token in TELEGRAM_TOKEN environment variable!"))
 
   (println "Starting the bot")
   (<!! #_{:clj-kondo/ignore [:unresolved-symbol]}
-   (try (p/start (c/token) handler)
+   (try (p/start (c/token!) handler)
         (catch Exception e
           (println "Exception in start bot: " e))))
   (recur))
