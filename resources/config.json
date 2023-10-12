@@ -1,0 +1,20 @@
+{
+    "server": {
+        "port": 3000,
+        "url": "https://localhost:3000"
+    },
+    "db": {
+        "type": "mysql",
+        "url": "mysql://oxllmkkch5uznjf7:dll73cc8nyk8ilj4@eporqep6b4b8ql12.chr7pe7iynqr.eu-west-1.rds.amazonaws.com:3306/oxi0c2cdlbmih98n"
+    },
+    "telegram": {
+        "token": "1324057622:AAHw82jikU8YK6_5jXbQP44i0oQNQNU03EY",
+        "admins": [
+            "misuno_san"
+        ]
+    },
+    "buffer-size": 300,
+    "tail-length": 5,
+    "log": true,
+    "stat-enabled": false
+}
