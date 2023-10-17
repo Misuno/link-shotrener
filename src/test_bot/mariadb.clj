@@ -4,10 +4,13 @@
             [test-bot.config :as c]
             [test-bot.utils :refer [log]]))
 
-(def database {:subprotocol "mysql"
-               :subname     (str c/db-url! "/link_shortener")
-               :user        "root"
-               :password    "fafner"})
+
+(defn setup-database! [ctx]
+  (swap! ctx assoc :database {:subprotocol (c/db-type ctx)
+                                 :subname     (str (c/db-url ctx) "/link_shortener")
+                                 :user        (c/db-user ctx)
+                                 :password    (c/db-password ctx)}))
+
 
 (defn current-timestamp
   []
@@ -20,56 +23,36 @@
           clicks))
 
 (defn save-click!
-  ([sl data]
-   (log "saving " sl " and " data)
-   (j/insert! database :clicks {:short_link sl
-                                :click_data data
-                                :click_ts (current-timestamp)}))
-  ([clicks]
+  ([ctx sl data]
+   (log ctx "saving " sl " and " data)
+   (j/insert! (:database (c/get-config ctx))
+              :clicks {:short_link sl
+                       :click_data data
+                       :click_ts (current-timestamp)}))
+  ([ctx clicks]
    ;; [{:short_link sl :data d}]
    (when (> (count clicks) 1)
-     (log "Sending " (count clicks) " to DB")
-     (j/insert-multi! database
+     (log ctx "Sending " (count clicks) " to DB")
+     (j/insert-multi! (:database (c/get-config ctx))
                       :clicks
                       [:short_link :click_data :click_ts]
                       (prepare-rows clicks)))))
 
-
-(comment
-  (j/insert! database
-             :clicks
-             [:short_link :click_data :click_ts]
-             ["111" "1111111" (current-timestamp)])
-
-  (j/insert-multi! database
-                   :clicks
-                   [:short_link :click_data :click_ts]
-                   [["111" "1111111" (current-timestamp)]
-                    ["222" "2222222" (current-timestamp)]
-                    ["333" "3333333" (current-timestamp)]])
-
-  (j/insert! database
-             :clicks
-             [:short_link :click_data :click_ts]
-             ["111" "1111111" (current-timestamp)
-              "222" "2222222" (current-timestamp)])
-
-  ())
-
 (defn save-to-db!
-  [id ll sl]
-  (j/insert! database :links {:short_link sl
-                              :long_link ll
-                              :chat id}))
+  [ctx id ll sl]
+  (j/insert! (:database (c/get-config ctx))
+             :links {:short_link sl
+                     :long_link ll
+                     :chat id}))
 
 (defn get-from-db!
-  [sl]
-  (:long_link (first (j/query
-                      database [(str " select long_link from links"
-                                     " where short_link = '" sl "'")]))))
+  [ctx sl]
+  (:long_link (first (j/query (:database (c/get-config ctx))
+                              [(str " select long_link from links"
+                                    " where short_link = '" sl "'")]))))
 
 (defn get-all-links!
-  [id]
-  (vec (j/query database
+  [ctx id]
+  (vec (j/query (:database (c/get-config ctx))
                 (str " select long_link, short_link from links"
                      " where chat = " id ";"))))

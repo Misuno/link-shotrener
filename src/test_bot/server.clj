@@ -2,22 +2,33 @@
   (:require [ring.adapter.jetty :refer [run-jetty]]
             [ring.util.response :as r]
             [test-bot.generator :refer [get-long-link!]]
-            [test-bot.stats :refer [save-click]]
+            [test-bot.stats :refer [save-click!]]
             [test-bot.config :as c]
             [test-bot.utils :refer [log]]))
 
-(defn link-found!
-  [sl ll request]
-  (save-click sl request)
-  (r/redirect ll))
+(defn link-found
+  [ctx request ll sl]
+  (save-click! ctx sl request)
+  ll)
 
-(defn srv-handler [{uri :uri :as request}]
-  (log "working on a uri" uri)
+(defn srv-handler [ctx {uri :uri :as request}]
+  (log ctx "working on a uri" uri)
   (try
-    (link-found! uri (get-long-link! uri) request)
-    (catch Error e (r/response "No link!!!"))))
+    (->> uri
+         (get-long-link! ctx)
+         (link-found ctx request uri)
+         r/redirect)
+    (catch Exception _ (r/response "No link!!!"))))
 
-(defn run-server []
-  (log "Starting server on port" (c/server-port!))
-  (run-jetty srv-handler {:port (c/server-port!)
-                          :join? false}))
+(defn run-server [ctx]
+  (let [port (c/server-port ctx)]
+    (log ctx "Starting server on port" port)
+    (run-jetty (partial srv-handler ctx)
+               {:port port
+                :join? false})))
+
+(comment
+
+  
+;;
+  )

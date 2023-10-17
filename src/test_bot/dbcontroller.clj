@@ -3,18 +3,21 @@
    ;;[test-bot.filedb :as dbc]
    [test-bot.mariadb :as dbc]))
 
+(defn init-db! [ctx]
+  (dbc/setup-database! ctx))
+
 (defn save-click!
-  ([sl data]
-   (dbc/save-click! sl data))
-  ([clicks]
-   (dbc/save-click! clicks)))
+  ([ctx sl data]
+   (dbc/save-click! ctx sl data))
+  ([ctx clicks]
+   (dbc/save-click! ctx clicks)))
 
 
-(defn get-all-links! [id]
-  (dbc/get-all-links! id))
+(defn get-all-links! [ctx id]
+  (dbc/get-all-links! ctx id))
 
-(defn save-to-db! [id long short]
-  (dbc/save-to-db! id long short))
+(defn save-to-db! [ctx id long short]
+  (dbc/save-to-db! ctx id long short))
 
-(defn get-from-db! [short]
-  (dbc/get-from-db! short))
+(defn get-from-db! [ctx short]
+  (dbc/get-from-db! ctx short))

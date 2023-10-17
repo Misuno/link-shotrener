@@ -7,26 +7,42 @@
 
 (def buf-size 300)
 (def buffer (atom []))
+(def clean-time 5000)
+(def f (atom nil))
 
-(defn write-buffer! []
-  (log "Clearing buffer!")
+(defn write-buffer! [ctx]
+  (log ctx "Clearing buffer!")
   (->> (reset-vals! buffer [])
        (first)
-       (db/save-click!))
-  (log "buffer is " @buffer))
+       (db/save-click! ctx))
+  (log ctx "buffer is " @buffer))
 
 
-(defn save-click
-  [sl data]
-  (when (c/stat-enabled!?)
+(defn save-click!
+  [ctx sl data]
+  (when (c/stat-enabled? ctx)
+    (future-cancel f)
     (swap! buffer
            conj
            {:short_link sl
             :data (j/write-value-as-string data)})
-    (when (<= buf-size (count @buffer))
-      (write-buffer!))))
+    (if (<= buf-size (count @buffer))
+      (write-buffer! ctx)
+      (reset! f (future (Thread/sleep clean-time)
+                     (write-buffer! ctx))))))
 
 (comment
+  (require '[test-bot.config :as c])
   (c/read-config!)
-  (save-click "lala" ";a;a;")
-  (c/stat-enabled!?))
+  (save-click! "lala" ";a;a;")
+  @buffer
+  (c/stat-enabled?)
+
+  (swap! buffer into (range 10))
+
+  (defn atom-test [atm]
+    (reset! atm []))
+
+  (atom-test buffer)
+;;
+  )

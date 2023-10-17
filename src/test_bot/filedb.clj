@@ -5,8 +5,8 @@
 (defn save-click! [& args])
 
 (defn save-to-db!
-  [id ll sl]
-  (spit (c/db-url!!) (str (s/join "," [sl ll id]) "\n") :append true))
+  [ctx id ll sl]
+  (spit (c/db-url ctx) (str (s/join "," [sl ll id]) "\n") :append true))
 
 (defn- split
   [str]
@@ -20,15 +20,15 @@
   (= sl (first list)))
 
 (defn get-from-db!
-  [sl]
+  [ctx sl]
   (let [[_ ll]
-        (->> (split (slurp (c/db-url!!)))
+        (->> (split (slurp (c/db-url ctx)))
              (filter #(is-needed-link? sl %))
              (first))]
     ll))
 
 (defn get-all-links!
-  [id]
-  (->> (read-split! (c/db-url!!))
+  [ctx id]
+  (->> (read-split! (c/db-url ctx))
        (filter (fn [[_ _ chatid]]
                  (= (str id) chatid)))))

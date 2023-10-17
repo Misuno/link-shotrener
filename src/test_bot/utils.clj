@@ -3,8 +3,8 @@
             [clojure.string :as str]))
 
 (defn log
-  [& text]
-  (when (c/log-enabled!?)
+  [ctx & text]
+  (when (c/log-enabled? ctx)
     (println text)))
 
 (defn get-shortlink-tail
