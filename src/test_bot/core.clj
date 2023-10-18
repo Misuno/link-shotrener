@@ -19,3 +19,16 @@
          (System/exit 1)))
   (start-telegram! context))
 
+(comment
+  (def context (atom {}))
+
+  (swap! context conj {:config (c/read-config!)})
+
+  (dbc/init-db! context)
+
+  (def srv (run-server context))
+
+  (.stop srv)
+  
+ ;;
+  )

@@ -7,10 +7,20 @@
 
 (defn setup-database! [ctx]
   (swap! ctx assoc :database {:subprotocol (c/db-type ctx)
-                                 :subname     (str (c/db-url ctx) "/link_shortener")
-                                 :user        (c/db-user ctx)
-                                 :password    (c/db-password ctx)}))
+                              :subname     (str (c/db-url ctx)
+                                                (c/db-name ctx))
+                              :user        (c/db-user ctx)
+                              :password    (c/db-password ctx)}))
 
+
+(comment
+
+  (def config (atom {:config (test-bot.config/read-config!)}))
+  @config
+  (setup-database! config)
+  (save-to-db! config 12345 "https://google.com" "/googa")
+;;
+  )
 
 (defn current-timestamp
   []
@@ -40,14 +50,14 @@
 
 (defn save-to-db!
   [ctx id ll sl]
-  (j/insert! (:database (c/get-config ctx))
+  (j/insert! (:database @ctx)
              :links {:short_link sl
                      :long_link ll
                      :chat id}))
 
 (defn get-from-db!
   [ctx sl]
-  (:long_link (first (j/query (:database (c/get-config ctx))
+  (:long_link (first (j/query (:database @ctx)
                               [(str " select long_link from links"
                                     " where short_link = '" sl "'")]))))
 

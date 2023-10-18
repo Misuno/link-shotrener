@@ -9,14 +9,15 @@
   (reset! cache {}))
 
 (defn add-to-cache!
-  [short long]
+  [ctx short long]
   (swap! cache #(conj % [short long]))
-  (when (> (count @cache) (c/buffer-size))
+  (when (> (count @cache) (c/buffer-size ctx))
     (swap! cache next)))
 
 (defn get-from-cache!
-  [short]
+  [ctx short]
   (let [ll (get @cache short)]
     (swap! cache dissoc short)
-    (add-to-cache! short ll)
+    (add-to-cache! ctx short ll)
     ll))
+

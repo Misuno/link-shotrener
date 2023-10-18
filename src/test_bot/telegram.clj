@@ -114,16 +114,14 @@
   [ctx]
   (println "Starting the bot")
   (let [handler (create-handler ctx)]
-    (<!!
-     (try (p/start (c/token ctx) handler)
-          (catch Exception e
-            (println "Exception in start bot: " e)))))
-  (recur ctx))
+    (try (p/start (c/token ctx) handler)
+         (catch Exception e
+           (println "Exception in start bot: " e)))))
 
 
 (comment
 
-  (start-telegram! (atom {:config {:telegram {:token "lalal"}
+  (start-telegram! (atom {:config {:telegram {:token "1324057622AAHw82jikU8YK6_5jXbQP44i0oQNQNU03EY"}
                                    :base-url "base"
                                    }}))
   ;;

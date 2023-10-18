@@ -15,7 +15,8 @@
                  [ring/ring-jetty-adapter    "1.8.2"]
                  [metosin/jsonista           "0.3.7"]
                  [clojure.java-time          "1.2.0"]
-                 [org.clojure/core.async     "1.6.681"]]
+                 [org.clojure/core.async     "1.6.681"]
+                 [com.taoensso/carmine       "3.3.0"]]
 
   :plugins [[lein-environ "1.2.0"]]
 

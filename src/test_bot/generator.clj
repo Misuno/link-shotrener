@@ -2,7 +2,8 @@
   (:require [nano-id.core :refer [nano-id]]
             [test-bot.dbcontroller :as db]
             [test-bot.config :as c]
-            [test-bot.cache :refer [add-to-cache! get-from-cache!]]))
+            [test-bot.cache :refer [add-to-cache! get-from-cache!]]
+            [test-bot.utils :refer [log]]))
 
 (defn save-link
   [id long short]
@@ -11,18 +12,19 @@
   short)
 
 (defn get-long-from-db!
-  [short]
-  (let [ll (db/get-from-db! short)]
+  [ctx short]
+  (let [ll (db/get-from-db! ctx short)]
     (if ll
-      (do (add-to-cache! short ll)
+      (do (add-to-cache! ctx short ll)
           ll)
       (throw (Exception. "No link in db")))))
 
 (defn get-long-link!
   [ctx short]
-  (get-from-cache! short
-                  (try (get-long-from-db! short)
-                       (catch Exception e (throw e)))))
+  (log ctx "get long link" short )
+  (or (get-from-cache! ctx short)
+      (try (get-long-from-db! ctx short)
+           (catch Exception e (throw e)))))
 
 (defn make-link []
   (nano-id (c/tail-length)))

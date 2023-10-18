@@ -1,16 +1,15 @@
 (ns test-bot.config
-  (:require [jsonista.core :as j]))
+  (:require [clojure.edn :as e]))
 
 (def ^:private config-file
-  "resources/config.json")
+  "resources/config.edn")
 
 (defn get-config [ctx]
   (or (:config @ctx)
       (throw (Exception. "Can't read config from context"))))
 
 (defn read-config! []
-  (try (j/read-value (slurp config-file)
-                     j/keyword-keys-object-mapper)
+  (try (e/read-string (slurp config-file))
        (catch Exception e
          (throw e))))
 
@@ -97,8 +96,8 @@
 (defn log-enabled? [ctx]
   (get-param-def-value ctx false :log))
 
-(defn stat-enabled? [ctx]
-  (get-param-def-value ctx false :stat-enabled))
+(defn rich-stat-enabled? [ctx]
+  (get-param-def-value ctx false :rich-stat :enabled))
 
 (defn db-type [ctx]
   (get-param-throws ctx "No db type specified in config" :db :type))
@@ -123,3 +122,6 @@
 
 (defn db-password [ctx]
   (get-param-def-value ctx "" :db :password))
+
+(defn simple-stat-enabled? [ctx]
+  (get-param-def-value ctx false :simple-stat :enabled))

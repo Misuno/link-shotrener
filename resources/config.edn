@@ -1,0 +1,20 @@
+{:server {:port 3000
+          :url "https://localhost:3000"}
+ 
+ :db {:type "mysql"
+      :url "//eporqep6b4b8ql12.chr7pe7iynqr.eu-west-1.rds.amazonaws.com:3306/" 
+      :db-name "oxi0c2cdlbmih98n"
+      :user "oxllmkkch5uznjf7"
+      :password "dll73cc8nyk8ilj4"}
+ 
+ :telegram {:token "1324057622AAHw82jikU8YK6_5jXbQP44i0oQNQNU03EY"
+            :admins ["misuno_san"]}
+ 
+ :buffer-size 300
+ :tail-length 5
+ :log true
+ :simple-stat {:enabled false
+               :type "redis"
+               :url "redis://default:ntOBnGdP1LZVQ5u4HDooRjIMqyq3M839@redis-11119.c72.eu-west-1-2.ec2.cloud.redislabs.com:11119"
+               }
+ :rich-stat {:enabled false}}

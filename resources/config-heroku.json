@@ -5,10 +5,10 @@
     },
     "db": {
         "type": "mysql",
-        "url": "//oxllmkkch5uznjf7:dll73cc8nyk8ilj4@eporqep6b4b8ql12.chr7pe7iynqr.eu-west-1.rds.amazonaws.com:3306/",
-        "db-name": "oxi0c2cdlbmih98n",
-        "user": "oxllmkkch5uznjf7",
-        "password": "dll73cc8nyk8ilj4"
+        "url": "mysql://oxllmkkch5uznjf7:dll73cc8nyk8ilj4@eporqep6b4b8ql12.chr7pe7iynqr.eu-west-1.rds.amazonaws.com:3306/oxi0c2cdlbmih98n",
+        "db-name": "link-shortener",
+        "user": "root",
+        "password": "fafner"
     },
     "telegram": {
         "token": "1324057622:AAHw82jikU8YK6_5jXbQP44i0oQNQNU03EY",
@@ -18,6 +18,6 @@
     },
     "buffer-size": 300,
     "tail-length": 5,
-    "log": false,
-    "stat-enabled": false
+    "log": true,
+    "stat-enabled": true
 }
