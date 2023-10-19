@@ -13,10 +13,12 @@
                  [mysql/mysql-connector-java "8.0.33"]
                  [ring/ring-core             "1.10.0"]
                  [ring/ring-jetty-adapter    "1.8.2"]
+                 [ring/ring-json             "0.5.1"]
                  [metosin/jsonista           "0.3.7"]
                  [clojure.java-time          "1.2.0"]
                  [org.clojure/core.async     "1.6.681"]
-                 [com.taoensso/carmine       "3.3.0"]]
+                 [com.taoensso/carmine       "3.3.0"]
+                 [compojure                  "1.7.0"]]
 
   :plugins [[lein-environ "1.2.0"]]
 
@@ -25,4 +27,4 @@
 
   :profiles {:uberjar {:aot :all}}
 
-  :min-lein-version "2.10.0")
+  :min-lein-version "2.9.0")

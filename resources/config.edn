@@ -13,7 +13,7 @@
  :buffer-size 300
  :tail-length 5
  :log true
- :simple-stat {:enabled false
+ :simple-stat {:enabled true
                :type "redis"
                :url "redis://default:ntOBnGdP1LZVQ5u4HDooRjIMqyq3M839@redis-11119.c72.eu-west-1-2.ec2.cloud.redislabs.com:11119"
                }

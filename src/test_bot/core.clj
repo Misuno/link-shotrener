@@ -15,7 +15,7 @@
        (run-server context)
        (catch Exception e
          (log context (str "Exiting because of "
-                   (.getMessage e)))
+                           (.getMessage e)))
          (System/exit 1)))
   ;; (start-telegram! context)
   )
@@ -33,3 +33,4 @@
   
  ;;
   )
+

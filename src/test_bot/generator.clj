@@ -6,9 +6,9 @@
             [test-bot.utils :refer [log]]))
 
 (defn save-link
-  [id long short]
-  (db/save-to-db! id long short)
-  (add-to-cache! short long)
+  [ctx id long short]
+  (db/save-to-db! ctx id long short)
+  (add-to-cache! ctx short long)
   short)
 
 (defn get-long-from-db!
@@ -26,12 +26,11 @@
       (try (get-long-from-db! ctx short)
            (catch Exception e (throw e)))))
 
-(defn make-link []
-  (nano-id (c/tail-length)))
+(defn make-link [ctx]
+  (nano-id (c/tail-length ctx)))
 
 (defn link-generator!
-  [id link]
-  (->> (make-link)
-       (str "/")
-       (save-link id link)))
+  [ctx id link]
+  (->> (make-link ctx)
+       (save-link ctx id link)))
 
