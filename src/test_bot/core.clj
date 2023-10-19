@@ -17,7 +17,8 @@
          (log context (str "Exiting because of "
                    (.getMessage e)))
          (System/exit 1)))
-  (start-telegram! context))
+  ;; (start-telegram! context)
+  )
 
 (comment
   (def context (atom {}))

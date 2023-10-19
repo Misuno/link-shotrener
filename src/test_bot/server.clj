@@ -22,7 +22,7 @@
     (catch Exception _ (r/response "No link!!! Fuck you!"))))
 
 (defn run-server [ctx]
-  (let [port (c/server-port ctx)]
+  (let [port (or (System/getenv "PORT") (c/server-port ctx))]
     (log ctx "Starting server on port" port)
     (run-jetty (partial srv-handler ctx)
                {:port port
