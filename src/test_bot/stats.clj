@@ -7,7 +7,7 @@
 (defn save-click!
   [ctx sl data]
   (log ctx "save click" sl)
-  (when (c/simple-stat-enabled?)
+  (when (c/simple-stat-enabled? ctx)
     (ss/save-click! sl))
   (when (c/rich-stat-enabled? ctx)
     (rs/save-click! ctx sl data)))

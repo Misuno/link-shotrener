@@ -9,7 +9,7 @@
 (defn link-found
   [ctx request sl ll]
   (log ctx "link found" sl "->" ll)
-  ;;(save-click! ctx sl request)
+  (save-click! ctx sl request)
   ll)
 
 (defn srv-handler [ctx {uri :uri :as request}]

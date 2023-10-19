@@ -23,4 +23,6 @@
   :main ^:skip-aot test-bot.core
   :target-path "target/%s"
 
-  :profiles {:uberjar {:aot :all}})
+  :profiles {:uberjar {:aot :all}}
+
+  :min-lein-version "2.10.0")
