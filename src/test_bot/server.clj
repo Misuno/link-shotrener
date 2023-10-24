@@ -17,19 +17,18 @@
             [test-bot.middleware :as m]
             [test-bot.utils :refer [log]]
             [test-bot.auth :as auth]
-            [test-bot.handlers :as h]))
-
-(def srv-ctx (atom {}))
+            [test-bot.handlers :as h]
+            [test-bot.core :as core]))
 
 (defroutes myroutes
   (context "/api/v1" []
     (POST "/addlink" {{uri :uri} :body :as request}
       (when (authenticated? request)
         (throw-unauthorized {:message "Not authorized"}))
-      (link-generator! srv-ctx 1 uri)))
+      (link-generator! core/context 1 uri)))
 
   (GET "/l/:short-link" [short-link]
-    (h/srv-handler srv-ctx {:uri short-link
+    (h/srv-handler core/context {:uri short-link
                             :data "some data"}))
 
   (GET "/" request
@@ -46,8 +45,6 @@
       (wrap-authorization auth/backend)))
 
 (defn run-server [ctx]
-  (reset! srv-ctx ctx)
-  
   (let [p (or (System/getenv "PORT") (c/server-port ctx))
         port (if (string? p) (Integer/parseInt p) p)]
     (log ctx "Starting server on port" port)
