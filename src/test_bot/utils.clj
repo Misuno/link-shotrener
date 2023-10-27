@@ -10,11 +10,11 @@
 (defn get-shortlink-tail
   "Cuts all excessive parts from shortened link and getting it to format /foobar"
   [dirty]
-  (let [almost-clean (-> dirty
-                         (str/split #"/")
-                         last)]
-       (if (not= (first almost-clean) "/")
-         (str "/" almost-clean)
-         almost-clean
-         )))
+  (-> dirty
+      (str/split #"/")
+      last))
         
+(comment
+  (get-shortlink-tail "http://localhost:3000/l/googa")
+;;
+  )

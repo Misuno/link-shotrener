@@ -19,7 +19,8 @@
                  [org.clojure/core.async     "1.6.681"]
                  [com.taoensso/carmine       "3.3.0"]
                  [compojure                  "1.7.0"]
-                 [buddy/buddy-auth           "3.0.323"]]
+                 [buddy/buddy-auth           "3.0.323"]
+                 [org.clojure/core.async     "1.6.681"]]
 
   :plugins [[lein-environ "1.2.0"]]
 

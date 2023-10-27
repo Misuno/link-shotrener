@@ -63,6 +63,6 @@
 
 (defn get-all-links!
   [ctx id]
-  (vec (j/query (:database (c/get-config ctx))
+  (vec (j/query (:database @ctx)
                 (str " select long_link, short_link from links"
                      " where chat = " id ";"))))

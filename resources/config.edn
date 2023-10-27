@@ -1,5 +1,5 @@
 {:server {:port 3000
-          :url "https://localhost:3000"}
+          :url "http://localhost:3000/l/"}
  
  :db {:type "mysql"
       :url "//eporqep6b4b8ql12.chr7pe7iynqr.eu-west-1.rds.amazonaws.com:3306/" 
@@ -7,7 +7,7 @@
       :user "oxllmkkch5uznjf7"
       :password "dll73cc8nyk8ilj4"}
  
- :telegram {:token "1324057622AAHw82jikU8YK6_5jXbQP44i0oQNQNU03EY"
+ :telegram {:token "1062986036:AAHOC7qlldyjDsh4FSrNfd9cUGbHxYTJQOI"
             :admins ["misuno_san"]}
  
  :buffer-size 300

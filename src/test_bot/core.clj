@@ -17,20 +17,23 @@
          (log context (str "Exiting because of "
                            (.getMessage e)))
          (System/exit 1)))
-  ;; (start-telegram! context)
+  (start-telegram! context)
   )
 
 (comment
-  (def context (atom {}))
+  (do
+    (def context (atom {}))
 
-  (swap! context conj {:config (c/read-config!)})
+    (swap! context conj {:config (c/read-config!)})
 
-  (dbc/init-db! context)
+    (dbc/init-db! context))
+
+  (start-telegram! context)
 
   (def srv (run-server context))
 
   (.stop srv)
-  
+
  ;;
   )
 

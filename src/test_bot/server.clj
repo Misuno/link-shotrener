@@ -47,8 +47,7 @@
 
 (defn run-server [ctx]
   (def srv-ctx ctx)
-  
-  (let [p (or (System/getenv "PORT") (c/server-port ctx))
+  (let [p (c/server-port ctx)
         port (if (string? p) (Integer/parseInt p) p)]
     (log ctx "Starting server on port" port)
     (run-jetty app ;;(partial srv-handler ctx)

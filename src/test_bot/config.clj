@@ -42,35 +42,6 @@
   [ctx defv & kws]
   (apply get-param ctx defv kws))
 
-(comment
-  (get-param-inner (atom {:config {:stat-enabled true}})
-                   [:lowg]
-                   "lalla")
-
-  (get-param-inner (atom {:config {:stat-enabled true}})
-                   [:ilog]
-                   (println "kaka"))
-
-  (get-param-inner (atom {:config {:stat-enabled true
-                                   :telegram {:token "token"}}})
-                   [:telegram :token]
-                   #(println "kaka"))
-
-  (get-param (atom {:config {:stat-enabled true
-                              :telegram {:token "token"}}})
-              #(throw (Exception. "qqqq"))
-              :telegram :token)
-
-  (get-param-callback #(throw (Exception. "qqqq")) :log)
-  (get-param-throws "rrrrr" :log)
-
-  (get-param-def-value "tutut" :log)
-  (get-param-def-value "tutut" :loga)
-  ;;
-  )
-
-
-
 (defn token
   "Shorthand for bot-token parameter"
   [ctx]
@@ -80,15 +51,17 @@
 (defn server-port
   "Shorthand for server-port parameter"
   [ctx]
-  (get-param-throws ctx
-                     "No server port in config"
-                     :server :port))
+  (or (System/getenv "PORT")
+      (get-param-throws ctx
+                        "No server port in config"
+                        :server :port)))
 
 (defn buffer-size [ctx]
   (get-param-def-value ctx 128 :buffer-size))
 
 (defn base-url [ctx]
-  (get-param-throws ctx "No base URL in config file" :server :url))
+  (or (System/getenv "LINKS_URI")
+      (get-param-throws ctx "No base URL in config file" :server :url)))
 
 (defn tail-length [ctx]
   (get-param-def-value ctx 7 :tail-length))
