@@ -1,5 +1,5 @@
-(ns test-bot.utils
-  (:require [test-bot.config :as c]
+(ns mlinks.utils
+  (:require [mlinks.config :as c]
             [clojure.string :as str]))
 
 (defn log

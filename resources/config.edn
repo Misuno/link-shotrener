@@ -7,7 +7,7 @@
       :user "oxllmkkch5uznjf7"
       :password "dll73cc8nyk8ilj4"}
  
- :telegram {:token "1062986036:AAHOC7qlldyjDsh4FSrNfd9cUGbHxYTJQOI"
+ :telegram {:token "6155555893:AAEMuxAxIQb0lIoDnwfjPX2aFu6mRCvQQFg"
             :admins ["misuno_san"]}
  
  :buffer-size 300

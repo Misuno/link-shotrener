@@ -1,4 +1,4 @@
-(ns test-bot.auth
+(ns mlinks.server.auth
   (:require [buddy.auth.backends :as backends]
             [ring.util.response :as r]))
 

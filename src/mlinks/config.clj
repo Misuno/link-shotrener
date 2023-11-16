@@ -1,4 +1,4 @@
-(ns test-bot.config
+(ns mlinks.config
   (:require [clojure.edn :as e]))
 
 (def ^:private config-file
@@ -45,8 +45,9 @@
 (defn token
   "Shorthand for bot-token parameter"
   [ctx]
-  (get-param-throws ctx "No telegram token in config"
-                     :telegram :token))
+  (or (System/getenv "TOKEN")
+      (get-param-throws ctx "No telegram token in config"
+                        :telegram :token)))
 
 (defn server-port
   "Shorthand for server-port parameter"

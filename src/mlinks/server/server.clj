@@ -1,4 +1,4 @@
-(ns test-bot.server
+(ns mlinks.server.server
   (:require [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.params :as rp]
             [ring.middleware.json :refer [wrap-json-body]]
@@ -11,13 +11,13 @@
             [buddy.auth.middleware :refer (wrap-authentication wrap-authorization)]
             [buddy.auth :refer [authenticated? throw-unauthorized]]
             
-            ;; Test-bot
-            [test-bot.generator :refer [get-long-link! link-generator!]]
-            [test-bot.config :as c]
-            [test-bot.middleware :as m]
-            [test-bot.utils :refer [log]]
-            [test-bot.auth :as auth]
-            [test-bot.handlers :as h]))
+            ;; mlinks
+            [mlinks.generator :refer [link-generator!]]
+            [mlinks.config :as c]
+            [mlinks.server.middleware :as m]
+            [mlinks.utils :refer [log]]
+            [mlinks.server.auth :as auth]
+            [mlinks.server.handlers :as h]))
 
 (def srv-ctx (atom {}))
 
@@ -60,7 +60,7 @@
 
   (swap! srv-ctx conj {:config (c/read-config!)})
 
-  (require '[test-bot.dbcontroller :as dbc])
+  (require '[mlinks.dbcontroller :as dbc])
   
   (dbc/init-db! srv-ctx)
 

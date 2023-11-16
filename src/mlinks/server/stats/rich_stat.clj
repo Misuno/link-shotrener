@@ -1,7 +1,7 @@
-(ns test-bot.rich-stat
-  (:require [test-bot.dbcontroller :as db]
+(ns mlinks.server.stats.rich-stat
+  (:require [mlinks.server.database.dbcontroller :as db]
             [jsonista.core :as j]
-            [test-bot.utils :refer [log]]))
+            [mlinks.utils :refer [log]]))
 
 (def buf-size 300)
 (def buffer (atom []))

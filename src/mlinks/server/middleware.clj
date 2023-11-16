@@ -1,4 +1,4 @@
-(ns test-bot.middleware)
+(ns mlinks.server.middleware)
 
 (defn extract-body [handler]
   (fn [request]

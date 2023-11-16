@@ -20,11 +20,13 @@
                  [com.taoensso/carmine       "3.3.0"]
                  [compojure                  "1.7.0"]
                  [buddy/buddy-auth           "3.0.323"]
-                 [org.clojure/core.async     "1.6.681"]]
+                 [org.clojure/core.async     "1.6.681"]
+                 [com.github.seancorfield/honeysql "2.5.1091"]
+]
 
   :plugins [[lein-environ "1.2.0"]]
 
-  :main ^:skip-aot test-bot.core
+  :main ^:skip-aot mlinks.core
   :target-path "target/%s"
 
   :profiles {:uberjar {:aot :all}}

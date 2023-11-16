@@ -1,6 +1,6 @@
-(ns test-bot.filedb
+(ns mlinks.server.database.filedb
   (:require [clojure.string :as s]
-            [test-bot.config :as c]))
+            [mlinks.config :as c]))
 
 (defn save-click! [& args])
 

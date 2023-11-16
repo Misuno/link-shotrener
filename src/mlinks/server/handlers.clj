@@ -1,7 +1,7 @@
-(ns test-bot.handlers
-  (:require [test-bot.utils :refer [log]]
-            [test-bot.generator :refer [get-long-link! link-generator!]]
-            [test-bot.stats :refer [save-click!]]
+(ns mlinks.server.handlers
+  (:require [mlinks.utils :refer [log]]
+            [mlinks.link :refer [get-long-link!]]
+            [mlinks.server.stats.stats :refer [save-click!]]
             [ring.util.response :as r]))
 
 (defn link-found

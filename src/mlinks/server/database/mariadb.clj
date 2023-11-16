@@ -1,8 +1,10 @@
-(ns test-bot.mariadb
+(ns mlinks.server.database.mariadb
   (:require [clojure.java.jdbc :as j]
             [java-time.api :as jt]
-            [test-bot.config :as c]
-            [test-bot.utils :refer [log]]))
+            [mlinks.config :as c]
+            [mlinks.utils :refer [log]]
+            [mlinks.dsl :refer [make-link]]
+            [honey.sql :as sql]))
 
 
 (defn setup-database! [ctx]
@@ -11,16 +13,6 @@
                                                 (c/db-name ctx))
                               :user        (c/db-user ctx)
                               :password    (c/db-password ctx)}))
-
-
-(comment
-
-  (def config (atom {:config (test-bot.config/read-config!)}))
-  @config
-  (setup-database! config)
-  (save-to-db! config 12345 "https://google.com" "/googa")
-;;
-  )
 
 (defn current-timestamp
   []
@@ -49,20 +41,29 @@
                       (prepare-rows clicks)))))
 
 (defn save-to-db!
-  [ctx id ll sl]
+  [ctx {:keys [author short long] :as link}]
   (j/insert! (:database @ctx)
-             :links {:short_link sl
-                     :long_link ll
-                     :chat id}))
+             :links {:short_link short
+                     :long_link long
+                     :chat author})
+  link)
 
 (defn get-from-db!
   [ctx sl]
-  (:long_link (first (j/query (:database @ctx)
-                              [(str " select long_link from links"
-                                    " where short_link = '" sl "'")]))))
+  (let [{:keys [id short_link long_link chat]}
+        (try (j/query (:database @ctx)
+                      (sql/format {:select [:long_link]
+                                     :from [:links]
+                                     :where [:= :short_link sl]}))
+             (catch Exception e (throw e)))]
+    (make-link id chat long_link short_link)))
 
 (defn get-all-links!
   [ctx id]
-  (vec (j/query (:database @ctx)
-                (str " select long_link, short_link from links"
-                     " where chat = " id ";"))))
+  (->> (try (j/query (:database @ctx)
+                     (sql/format {:select [:long_link :short_link]
+                                  :from :links
+                                  :where [:= :chat id]}))
+            (catch Exception e (throw e)))
+       (mapv (fn [{:keys [id long_link short_link chat]}]
+               (make-link id chat long_link short_link)))))

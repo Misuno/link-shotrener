@@ -1,5 +1,5 @@
-(ns test-bot.cache
-  (:require [test-bot.config :as c]))
+(ns mlinks.cache
+  (:require [mlinks.config :as c]))
 
 (def ^:private cache (atom (array-map)))
 
@@ -9,15 +9,15 @@
   (reset! cache {}))
 
 (defn add-to-cache!
-  [ctx short long]
-  (swap! cache #(conj % [short long]))
+  "Takes a context and a link, adds link to cache, returns link"
+  [ctx link]
+  (swap! cache #(conj % [short link]))
   (when (> (count @cache) (c/buffer-size ctx))
-    (swap! cache next)))
+    (swap! cache next))
+  link)
 
 (defn get-from-cache!
   [ctx short]
   (let [ll (get @cache short)]
     (swap! cache dissoc short)
-    (add-to-cache! ctx short ll)
-    ll))
-
+    (add-to-cache! ctx ll)))

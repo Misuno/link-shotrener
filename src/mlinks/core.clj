@@ -1,9 +1,9 @@
-(ns test-bot.core
-  (:require [test-bot.server :refer [run-server]]
-            [test-bot.telegram :refer [start-telegram!]]
-            [test-bot.config :as c]
-            [test-bot.utils :refer [log]]
-            [test-bot.dbcontroller :as dbc])
+(ns mlinks.core
+  (:require [mlinks.server.server :refer [run-server]]
+            [mlinks.telegram.telegram :refer [start-telegram!]]
+            [mlinks.config :as c]
+            [mlinks.utils :refer [log]]
+            [mlinks.server.database.dbcontroller :as dbc])
   (:gen-class))
 
 (def context (atom {}))
