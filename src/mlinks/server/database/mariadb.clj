@@ -6,6 +6,7 @@
             [mlinks.dsl :refer [make-link]]
             [honey.sql :as sql]))
 
+(def links  :links_old)
 
 (defn setup-database! [ctx]
   (swap! ctx assoc :database {:subprotocol (c/db-type ctx)
@@ -41,10 +42,9 @@
                       (prepare-rows clicks)))))
 
 (defn save-link!
-
   [ctx {:keys [author short long] :as link}]
   (j/insert! (:database @ctx)
-             :links {:short_link short
+             links {:short_link short
                      :long_link long
                      :chat author})
   link)
@@ -52,7 +52,7 @@
 (defn get-long!
   [ctx sl]
   (let [req (sql/format {:select [:long_link :short_link]
-                         :from [:links]
+                         :from [links]
                          :where [:= :short_link (str sl)]}
                         {:inline true})
         {:keys [id short_link long_link chat]} (try
@@ -63,7 +63,7 @@
 (defn get-all-links!
   [ctx id]
   (let [req (sql/format {:select [:long_link :short_link]
-                         :from :links
+                         :from links
                          :where [:= :chat id]}
                         {:inline true})]
     (->> (try
@@ -83,11 +83,13 @@
 
     (setup-database! context))
 
+  (save-link! context {:author "sad" :short "googa" :long "https://google.com"})
+
   (get-long! context "lalal")
 
   (j/query (:database @context)
            (sql/format {:select [:*]
-                        :from [:links]
+                        :from [links]
                         :where [:= :short_link "lalal"]}
                        {:inline true}))
 
