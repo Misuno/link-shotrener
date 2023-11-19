@@ -12,6 +12,4 @@
 (defn link-generator!
   [ctx id link]
   (->> (create-short-link ctx)
-       (make-link nil id link)
-       (save-link ctx)))
-
+       (make-link nil id link)))

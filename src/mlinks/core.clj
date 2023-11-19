@@ -3,7 +3,8 @@
             [mlinks.telegram.telegram :refer [start-telegram!]]
             [mlinks.config :as c]
             [mlinks.utils :refer [log]]
-            [mlinks.server.database.dbcontroller :as dbc])
+            [mlinks.server.database.dbcontroller :as dbc]
+            [morse.polling :as p])
   (:gen-class))
 
 (def context (atom {}))
@@ -26,9 +27,17 @@
 
     (swap! context conj {:config (c/read-config!)})
 
-    (dbc/init-db! context))
+    (dbc/init-db! context)
 
-  (start-telegram! context)
+    (require '[mlinks.telegram.telegram :as tg])
+
+    (require '[morse.polling :as p])
+
+    (tg/create-handler context))
+
+  (def running (p/start (c/token context) tg/handler))
+
+  (p/stop running)
 
   (def srv (run-server context))
 

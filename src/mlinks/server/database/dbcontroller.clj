@@ -1,23 +1,24 @@
 (ns mlinks.server.database.dbcontroller
   (:require
    ;;[mlinks.filedb :as dbc]
-   [mlinks.server.database.mariadb :as dbc]))
+   [mlinks.server.database.mariadb :as db]))
 
 (defn init-db! [ctx]
-  (dbc/setup-database! ctx))
+  (db/setup-database! ctx))
 
 (defn save-click!
   ([ctx sl data]
-   (dbc/save-click! ctx sl data))
+   (db/save-click! ctx sl data))
   ([ctx clicks]
-   (dbc/save-click! ctx clicks)))
+   (db/save-click! ctx clicks)))
 
 
 (defn get-all-links! [ctx id]
-  (dbc/get-all-links! ctx id))
+  (db/get-all-links! ctx id))
 
-(defn save-to-db! [ctx link]
-  (dbc/save-to-db! ctx link))
+(defn save-link! [ctx link]
+  (db/save-link!
+ ctx link))
 
-(defn get-from-db! [ctx short]
-  (dbc/get-from-db! ctx short))
+(defn get-long! [ctx short]
+  (db/get-long! ctx short))

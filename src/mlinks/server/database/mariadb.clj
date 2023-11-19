@@ -40,7 +40,8 @@
                       [:short_link :click_data :click_ts]
                       (prepare-rows clicks)))))
 
-(defn save-to-db!
+(defn save-link!
+
   [ctx {:keys [author short long] :as link}]
   (j/insert! (:database @ctx)
              :links {:short_link short
@@ -48,22 +49,47 @@
                      :chat author})
   link)
 
-(defn get-from-db!
+(defn get-long!
   [ctx sl]
-  (let [{:keys [id short_link long_link chat]}
-        (try (j/query (:database @ctx)
-                      (sql/format {:select [:long_link]
-                                     :from [:links]
-                                     :where [:= :short_link sl]}))
-             (catch Exception e (throw e)))]
+  (let [req (sql/format {:select [:long_link :short_link]
+                         :from [:links]
+                         :where [:= :short_link (str sl)]}
+                        {:inline true})
+        {:keys [id short_link long_link chat]} (try
+                                                 (j/query (:database @ctx) req)
+                                                 (catch Exception e (throw e)))]
     (make-link id chat long_link short_link)))
 
 (defn get-all-links!
   [ctx id]
-  (->> (try (j/query (:database @ctx)
-                     (sql/format {:select [:long_link :short_link]
-                                  :from :links
-                                  :where [:= :chat id]}))
-            (catch Exception e (throw e)))
-       (mapv (fn [{:keys [id long_link short_link chat]}]
-               (make-link id chat long_link short_link)))))
+  (let [req (sql/format {:select [:long_link :short_link]
+                         :from :links
+                         :where [:= :chat id]}
+                        {:inline true})]
+    (->> (try
+           (j/query (:database @ctx)
+                    req)
+           (catch Exception e (throw e)))
+         (mapv (fn [{:keys [id long_link short_link chat]}]
+                 (make-link id chat long_link short_link))))))
+
+
+(comment
+
+  (do
+    (def context (atom {}))
+
+    (swap! context conj {:config (c/read-config!)})
+
+    (setup-database! context))
+
+  (get-long! context "lalal")
+
+  (j/query (:database @context)
+           (sql/format {:select [:*]
+                        :from [:links]
+                        :where [:= :short_link "lalal"]}
+                       {:inline true}))
+
+  ;;
+  )

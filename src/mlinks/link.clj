@@ -1,23 +1,19 @@
 (ns mlinks.link
   (:require [mlinks.cache :refer [add-to-cache! get-from-cache!]]
             [mlinks.utils :refer [log]]
-            [mlinks.server.database.dbcontroller :as db]))
+            [mlinks.server.database.dbcontroller :as dbc]))
 
 (defn save-link
   [ctx link]
+  (log ctx "save link " link)
   (->> link
-       (db/save-to-db! ctx)
+       (dbc/save-link! ctx)
        (add-to-cache! ctx)))
 
-(defn- get-long-from-db!
-  [ctx short]
-  (let [link (try (db/get-from-db! ctx short)
-                  (catch Exception e (throw e)))]
-    (add-to-cache! ctx link)))
-
-(defn get-long-link!
+(defn get-long!
   [ctx short]
   (log ctx "get long link" short )
   (or (get-from-cache! ctx short)
-      (try (get-long-from-db! ctx short)
+      (try (->> (dbc/get-long! ctx short)
+                (add-to-cache! ctx))
            (catch Exception e (throw e)))))

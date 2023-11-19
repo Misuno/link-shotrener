@@ -29,8 +29,7 @@
       (link-generator! srv-ctx 1 uri)))
 
   (GET "/l/:short-link" [short-link]
-    (h/srv-handler srv-ctx {:uri short-link
-                            :data "some data"}))
+    (h/srv-handler srv-ctx {:uri short-link}))
 
   (GET "/" request
     (str "<h1>Hello World</h1>" request)))

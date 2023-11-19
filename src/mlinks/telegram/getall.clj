@@ -13,6 +13,17 @@
 (defn link-keyboard [link cb-data]
   {:reply_markup {:inline_keyboard [[{:text link
                                       :callback_data cb-data}]]}})
+(defn default-text-handler []
+  (fn [ctx id _message]
+    (t/send-text (c/token ctx)
+                 id
+                 {:reply_markup {:keyboard [[{:text "Create link"}]
+                                            [{:text "Get link"}]
+                                            [{:text "Show all my links"}]]}
+                  :one_time_keyboard false
+                  :is_persistent true}
+                 "That's your options:")))
+
 
 (defn callback [ctx
                 {{message_id :message_id} :message {id :id} :from}]

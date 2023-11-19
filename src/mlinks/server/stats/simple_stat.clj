@@ -8,4 +8,9 @@
     (swap! stats assoc kw (inc old))))
 
 (defn stat-for-link [link]
-  -1)
+  (if-let [res (->> link
+             :short
+             keyword
+             (get @stats))]
+    res
+    0))
