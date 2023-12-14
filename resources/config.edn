@@ -7,7 +7,7 @@
       :user "oxllmkkch5uznjf7"
       :password "dll73cc8nyk8ilj4"}
  
- :telegram {:token "6155555893:AAEMuxAxIQb0lIoDnwfjPX2aFu6mRCvQQFg"
+ :telegram {:token "1062986036:AAHOC7qlldyjDsh4FSrNfd9cUGbHxYTJQOI"
             :admins ["misuno_san"]}
  
  :buffer-size 300
@@ -16,5 +16,6 @@
  :simple-stat {:enabled true
                :type "redis"
                :url "redis://default:ntOBnGdP1LZVQ5u4HDooRjIMqyq3M839@redis-11119.c72.eu-west-1-2.ec2.cloud.redislabs.com:11119"
+               :save-time 10000
                }
  :rich-stat {:enabled false}}

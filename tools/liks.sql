@@ -1,8 +1,9 @@
-CREATE TABLE link_shortener.links (
+CREATE TABLE links (
 	id SERIAL,
-	short_link varchar(100) NOT NULL,
-	long_link varchar(100) NOT NULL,
-	chat varchar(100) NULL,
+	short varchar(100) NOT NULL,
+	`long` varchar(100) NOT NULL,
+	author varchar(100) NULL,
+	created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (id))
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb3

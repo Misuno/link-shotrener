@@ -5,9 +5,14 @@
             [mlinks.utils :refer [log]]))
 
 (defn save-click!
-  [ctx link data]
+  [ctx data link]
   (log ctx "save click" link)
   (when (c/simple-stat-enabled? ctx)
     (ss/save-click! link))
   (when (c/rich-stat-enabled? ctx)
-    (rs/save-click! ctx link data)))
+    (rs/save-click! ctx link data))
+  link)
+
+(defn start! [ctx]
+  (when (c/simple-stat-enabled? ctx)
+    (ss/start-saving! ctx (c/simple-stat-save-time ctx))))

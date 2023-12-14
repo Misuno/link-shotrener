@@ -17,7 +17,8 @@
             [mlinks.server.middleware :as m]
             [mlinks.utils :refer [log]]
             [mlinks.server.auth :as auth]
-            [mlinks.server.handlers :as h]))
+            [mlinks.server.handlers :as h]
+            [mlinks.server.stats.stats :as stats]))
 
 (def srv-ctx (atom {}))
 
@@ -45,11 +46,12 @@
       (wrap-authorization auth/backend)))
 
 (defn run-server [ctx]
-  (def srv-ctx ctx)
+  (reset! srv-ctx ctx)
   (let [p (c/server-port ctx)
         port (if (string? p) (Integer/parseInt p) p)]
     (log ctx "Starting server on port" port)
-    (run-jetty app ;;(partial srv-handler ctx)
+    (stats/start! ctx)
+    (run-jetty app
                {:port port
                 :join? false})))
 

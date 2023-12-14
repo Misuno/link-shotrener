@@ -24,10 +24,11 @@
   (get @text-handlers chatid (default-text-handler)))
 
 
-(defn liks-header [ctx link]
-  (str "Short Link: " (str (c/base-url ctx) (:short link))
-       "\nLong Link: " (:long link)
-       "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"))
+(defn liks-header [ctx {:keys [link info]}]
+  (str "Short Link: " (str (c/base-url ctx) (:sl link)) "\n"
+       "Long Link: " (:ll link) "\n"
+       "Click count: " (:clicks info 0) "\n"
+       "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"))
 
 (defn check-authorization
   "Checks if user is in authorized users list. If no, throws Exception"
@@ -49,11 +50,13 @@
   ([link]
    (link-keyboard link {}))
   ([link  params]
-   (let [{:keys [long short]} link]
+   (let [{:keys [sl ll]} link]
+     (println "making keyboard: long " ll ", short: " sl)
      (conj params
            {:reply_markup
-            {:inline_keyboard [[{:text long :url long}
-                                {:text "📈 Stats" :callback_data (str "{:a :stats :l " short "}")}]]}}))))
+            {:inline_keyboard [[{:text ll :url ll}
+                                {:text "📈 Stats"
+                                 :callback_data (str {:a :stats :l sl})}]]}}))))
 
 (defn newlink
   [ctx id]
@@ -66,7 +69,7 @@
                                    id
                                    (->> (g/link-generator! ctx id link)
                                         (l/save-link ctx)
-                                        :short
+                                        :sl
                                         (str (c/base-url ctx))))
                       (clear-handler id)))))
 
@@ -90,22 +93,26 @@
   (log ctx "all links: " id)
   (->> (check-authorization ctx msg)
        (:id)
-       (dbc/get-all-links! ctx)
-       (mapv (fn [link]
+       (dbc/get-links-with-info! ctx)
+       (mapv (fn [link-info]
                (t/send-text (c/token ctx)
                             id
                             (->> {}
-                                 (link-keyboard link)
+                                 (link-keyboard (:link link-info))
                                  disable-preview)
-                            (liks-header ctx link))))))
+                            (liks-header ctx link-info))))))
 
 (defn link-info [ctx chatid message-id short-link]
-  (try (let [link (l/get-long! ctx short-link)]
-         (t/edit-text (c/token ctx) chatid message-id
-                      (->> {}
-                           disable-preview
-                           (link-keyboard link))
-                      (str (liks-header ctx link)
-                           "\n"
-                           "Click count: " (ss/stat-for-link short-link))) )
-       (catch Exception e ((t/edit-text (c/token ctx) chatid message-id (str "Error: " e))))))
+  (let [link (l/get-long! ctx short-link)]
+    (try
+      (t/edit-text (c/token ctx) chatid message-id
+                   (->> {}
+                        disable-preview
+                        (link-keyboard link))
+                   (str (liks-header ctx link)
+                        "\n"
+                        "Click count: " (ss/stat-for-link short-link)))
+      (catch Exception e (t/edit-text (c/token ctx)
+                                      chatid
+                                      message-id
+                                      (str "Error: " e))))))

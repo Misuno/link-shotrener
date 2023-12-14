@@ -16,9 +16,16 @@
 (defn get-all-links! [ctx id]
   (db/get-all-links! ctx id))
 
+(defn get-links-with-info! [ctx author]
+  (db/get-links-with-info! ctx author))
+
 (defn save-link! [ctx link]
   (db/save-link!
- ctx link))
+   ctx link))
 
 (defn get-long! [ctx short]
   (db/get-long! ctx short))
+
+(defn write-simple-stat!
+  [ctx stats]
+  (db/write-simple-stat! ctx stats))

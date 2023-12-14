@@ -2,6 +2,6 @@
 
 (defn make-link [id author long short]
   {:id id
-   :long long
-   :short short
+   :ll long
+   :sl short
    :author author})

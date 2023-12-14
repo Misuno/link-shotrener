@@ -99,3 +99,6 @@
 
 (defn simple-stat-enabled? [ctx]
   (get-param-def-value ctx false :simple-stat :enabled))
+
+(defn simple-stat-save-time [ctx]
+  (get-param-def-value ctx 10000 :simple-stat :save-time))

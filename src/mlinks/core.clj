@@ -4,7 +4,8 @@
             [mlinks.config :as c]
             [mlinks.utils :refer [log]]
             [mlinks.server.database.dbcontroller :as dbc]
-            [morse.polling :as p])
+            [morse.polling :as p]
+            [clojure.core.async :as ca])
   (:gen-class))
 
 (def context (atom {}))
@@ -18,8 +19,7 @@
          (log context (str "Exiting because of "
                            (.getMessage e)))
          (System/exit 1)))
-  (start-telegram! context)
-  )
+  (start-telegram! context))
 
 (comment
   (do
@@ -33,16 +33,24 @@
 
     (require '[morse.polling :as p])
 
-    (tg/create-handler context))
+    (require '[mlinks.server.stats.simple-stat :as ss])
 
-  (def running (p/start (c/token context) tg/handler))
+    (require '[clojure.core.async :as ca]))
 
-  (p/stop running)
+  (tg/create-handler context)
+
+  (def tg (p/start (c/token context) tg/handler))
+
+  (p/stop tg)
+
+  (def stop (ss/start-saving! context 3000))
+
+  (ca/close! stop)
 
   (def srv (run-server context))
 
-  (.stop srv)
+  (.stop srv))
 
  ;;
-  )
+  
 

@@ -37,9 +37,9 @@
   (println (c/log-enabled? ctx))
   (log ctx "all links: " id)
   (authorized-callback (->> (db/get-all-links! ctx id)
-                            (mapv (fn [{:keys [:short_link :long_link]}]
+                            (mapv (fn [{:keys [sl ll]}]
                                     (t/send-text (c/token ctx)
                                                  id
-                                                 (link-keyboard long_link "test")
-                                                 (str long_link " -> "
-                                                      (c/base-url ctx) short_link)))))))
+                                                 (link-keyboard ll "test")
+                                                 (str ll " -> "
+                                                      (c/base-url ctx) sl)))))))

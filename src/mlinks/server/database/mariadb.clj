@@ -6,7 +6,10 @@
             [mlinks.dsl :refer [make-link]]
             [honey.sql :as sql]))
 
-(def links  :links_old)
+(def links  :links)
+
+(def simple-stats :simple-stats)
+
 
 (defn setup-database! [ctx]
   (swap! ctx assoc :database {:subprotocol (c/db-type ctx)
@@ -42,36 +45,57 @@
                       (prepare-rows clicks)))))
 
 (defn save-link!
-  [ctx {:keys [author short long] :as link}]
-  (j/insert! (:database @ctx)
-             links {:short_link short
-                     :long_link long
-                     :chat author})
-  link)
+  [ctx link]
+  (let [res (try (j/insert! (:database @ctx)
+                             links link)
+                 (catch Exception e (throw e)))]
+    (->> res
+        first
+        :generated_key
+        (assoc link :id))))
 
 (defn get-long!
   [ctx sl]
-  (let [req (sql/format {:select [:long_link :short_link]
+  (let [req (sql/format {:select [:id :ll :sl]
                          :from [links]
-                         :where [:= :short_link (str sl)]}
-                        {:inline true})
-        {:keys [id short_link long_link chat]} (try
-                                                 (j/query (:database @ctx) req)
-                                                 (catch Exception e (throw e)))]
-    (make-link id chat long_link short_link)))
+                         :where [:= :sl (str sl)]}
+                        {:inline true})]
+    (-> (try
+          (j/query (:database @ctx) req)
+          (catch Exception e (throw e)))
+        first)))
 
 (defn get-all-links!
   [ctx id]
-  (let [req (sql/format {:select [:long_link :short_link]
+  (let [req (sql/format {:select [:id :ll :sl]
                          :from links
-                         :where [:= :chat id]}
+                         :where [:= :author id]}
                         {:inline true})]
-    (->> (try
-           (j/query (:database @ctx)
-                    req)
-           (catch Exception e (throw e)))
-         (mapv (fn [{:keys [id long_link short_link chat]}]
-                 (make-link id chat long_link short_link))))))
+    (try (j/query (:database @ctx) req)
+         (catch Exception e (throw e)))))
+
+(defn get-links-with-info! [ctx author]
+  (let [req (-> {:select [:links.id :sl :ll :author :clicks]
+                 :from links
+                 :left-join [simple-stats [:= :links.id :simple-stats.id]]
+                 :where [:= :author author]}
+                (sql/format {:inline true}))
+        res (try (j/query (:database @ctx) req)
+               (catch Exception e (throw e)))]
+    (mapv (fn [{:keys [id author sl ll clicks]}]
+            {:link (make-link id author ll sl)
+             :info {:clicks clicks}})
+          res)))
+
+;; TODO debug this func
+(defn write-simple-stat! [ctx stats]
+  (let [req (-> {:insert-into [simple-stats]
+                 :columns [:id :clicks]
+                 :values (vec stats)
+                 :on-duplicate-key-update {:fields {:clicks [:+ :clicks [:values 'clicks]]}}}
+                (sql/format {:inline true}))]
+    (try (j/db-do-commands (:database @ctx) req)
+         (catch Exception e (throw e)))))
 
 
 (comment
@@ -83,9 +107,15 @@
 
     (setup-database! context))
 
-  (save-link! context {:author "sad" :short "googa" :long "https://google.com"})
+  (get-links-with-info! context "sad")
 
-  (get-long! context "lalal")
+  (save-link! context {:author "sad" :sl "googa" :ll "https://google.com"})
+
+  (j/insert! (:database @context) links {:author "sad" :sl "googa" :ll "https://google.com"})
+
+  (get-all-links! context "sad")
+
+  (get-long! context "V2HKU")
 
   (j/query (:database @context)
            (sql/format {:select [:*]
