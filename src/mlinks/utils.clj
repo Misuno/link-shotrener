@@ -13,8 +13,14 @@
   (-> dirty
       (str/split #"/")
       last))
+
+(defn complete-short-link [ctx link]
+  (assoc link
+         :sl
+         (str (get-in @ctx [:config :server :url])
+              (:sl link))))
         
 (comment
   (get-shortlink-tail "http://localhost:3000/l/googa")
-;;
+  ;;
   )

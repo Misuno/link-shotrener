@@ -69,7 +69,7 @@
   [ctx id]
   (let [req (sql/format {:select [:id :ll :sl]
                          :from links
-                         :where [:= :author id]}
+                         :where [:= :author (str id)]}
                         {:inline true})]
     (try (j/query (:database @ctx) req)
          (catch Exception e (throw e)))))

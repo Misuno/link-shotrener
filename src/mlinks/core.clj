@@ -19,7 +19,8 @@
          (log context (str "Exiting because of "
                            (.getMessage e)))
          (System/exit 1)))
-  (start-telegram! context))
+  ;; (start-telegram! context)
+  )
 
 (comment
   (do
@@ -49,8 +50,12 @@
 
   (def srv (run-server context))
 
-  (.stop srv))
+  (.stop srv)
 
- ;;
+  (-main [])
+;
+  
+  )
+;;
   
 

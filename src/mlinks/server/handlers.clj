@@ -8,8 +8,7 @@
 (defn srv-handler [ctx {uri :uri :as request}]
   (log ctx "working on a uri" uri)
   (try
-    (->> uri
-         (get-long! ctx)
+    (->> (get-long! ctx uri)
          (save-click! ctx request)
          :ll
          r/redirect)
